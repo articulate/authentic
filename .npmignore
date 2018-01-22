@@ -1,0 +1,10 @@
+*.log
+*.md
+.DS_Store
+.eslintrc.js
+.gitignore
+.travis.yml
+/.nyc_output
+/node_modules
+/test
+yarn.lock
