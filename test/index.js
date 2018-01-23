@@ -6,16 +6,16 @@ const keys  = require('./fixtures/keys')
 const oidc  = require('./fixtures/oidc')
 const token = require('./fixtures/token')
 
-const { issuer: oidcUri } = oidc
+const { issuer: oidcURI } = oidc
 
-const authentic = require('..')({ oidcUri, ignoreExpiration: true })
+const authentic = require('..')({ oidcURI, ignoreExpiration: true })
 
 describe('authentic', () => {
   const res = property()
 
   beforeEach(() => {
-    nock(oidcUri).get('/.well-known/openid-configuration').reply(200, oidc)
-    nock(oidcUri).get('/v1/keys').reply(200, keys)
+    nock(oidcURI).get('/.well-known/openid-configuration').reply(200, oidc)
+    nock(oidcURI).get('/v1/keys').reply(200, keys)
   })
 
   nock.disableNetConnect()

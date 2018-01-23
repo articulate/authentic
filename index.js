@@ -31,14 +31,14 @@ const unauthorized = err =>
   Promise.reject(Boom.wrap(err, 401))
 
 const factory = opts => {
-  const verifyOpts = dissoc('oidcUri', opts)
+  const verifyOpts = dissoc('oidcURI', opts)
 
   const getKey = property()
 
   const getSigningKey = kid =>
     getKey()
       ? getKey()(kid)
-      : buildClient(opts.oidcUri + wellKnown)
+      : buildClient(opts.oidcURI + wellKnown)
         .then(getKey)
         .then(thrush(kid))
 
