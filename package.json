@@ -1,5 +1,5 @@
 {
-  "name": "authentic",
+  "name": "@articulate/authentic",
   "version": "0.0.0",
   "description": "Proper validation of JWT's against JWK's",
   "main": "index.js",
