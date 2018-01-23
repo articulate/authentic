@@ -5,7 +5,7 @@ const jwt      = require('jsonwebtoken')
 const property = require('prop-factory')
 
 const {
-  applyTo: thrush, curryN, dissoc, partialRight, path, prop, tap
+  applyTo: thrush, curryN, dissoc, partialRight, path, prop
 } = require('ramda')
 
 const { promisify, rename } = require('@articulate/funky')
@@ -31,14 +31,14 @@ const unauthorized = err =>
   Promise.reject(Boom.wrap(err, 401))
 
 const factory = opts => {
-  const verifyOpts = dissoc('configUri', opts)
+  const verifyOpts = dissoc('oidcUri', opts)
 
   const getKey = property()
 
   const getSigningKey = kid =>
     getKey()
       ? getKey()(kid)
-      : buildClient(opts.configUri + wellKnown)
+      : buildClient(opts.oidcUri + wellKnown)
         .then(getKey)
         .then(thrush(kid))
 
