@@ -17,12 +17,14 @@ const authentic = require('..')({
 
 const badIss = jwt.decode(bad, { complete: true }).payload.iss
 
+const wellKnown = '/.well-known/openid-configuration'
+
 describe('authentic', () => {
   const res = property()
 
   beforeEach(() => {
-    nock(issuer).get('/.well-known/openid-configuration').reply(200, oidc)
-    nock(issuer).get('/v1/keys').reply(200, keys)
+    nock(issuer).get(wellKnown).once().reply(200, oidc)
+    nock(issuer).get('/v1/keys').once().reply(200, keys)
   })
 
   nock.disableNetConnect()
@@ -37,6 +39,10 @@ describe('authentic', () => {
     )
 
     it('validates the jwt against the jwks', () =>
+      expect(res().sub).to.equal('00udjyjssbt2S1QVr0h7')
+    )
+
+    it('caches the jwks client', () =>
       expect(res().sub).to.equal('00udjyjssbt2S1QVr0h7')
     )
   })

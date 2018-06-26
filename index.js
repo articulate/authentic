@@ -2,8 +2,6 @@ const Boom     = require('boom')
 const gimme    = require('@articulate/gimme')
 const jwks     = require('jwks-rsa')
 const jwt      = require('jsonwebtoken')
-const property = require('prop-factory')
-const url      = require('url')
 
 const {
   applyTo: thrush, curryN, dissoc, partialRight, prop
@@ -32,20 +30,22 @@ const unauthorized = err =>
   Promise.reject(Boom.wrap(err, 401))
 
 const factory = opts => {
+  const clients    = {}
   const verifyOpts = dissoc('issWhitelist', opts)
+
+  const cacheClient = iss => client =>
+    clients[iss] = client
 
   const checkIss = token =>
     opts.issWhitelist.indexOf(token.payload.iss) > -1
       ? Promise.resolve(token)
-      : Promise.reject(new Error(`iss: '${token.payload.iss}' not in issWhitelist`))
-
-  const getKey = property()
+      : Promise.reject(new Error(`iss '${token.payload.iss}' not in issWhitelist`))
 
   const getSigningKey = ({ header: { kid }, payload: { iss } }) =>
-    getKey()
-      ? getKey()(kid)
+    clients[iss]
+      ? clients[iss](kid)
       : buildClient(iss + wellKnown)
-        .then(getKey)
+        .then(cacheClient(iss))
         .then(thrush(kid))
 
   const verify = curryN(2, partialRight(promisify(jwt.verify), [ verifyOpts ]))
