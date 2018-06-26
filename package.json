@@ -23,7 +23,7 @@
     "test:coverage": "nyc yarn test"
   },
   "dependencies": {
-    "@articulate/funky": "^0.1.0",
+    "@articulate/funky": "^1.2.0",
     "@articulate/gimme": "^1.0.0",
     "boom": "5.2.0",
     "jsonwebtoken": "^8.1.1",

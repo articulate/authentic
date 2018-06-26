@@ -3,9 +3,10 @@ const gimme    = require('@articulate/gimme')
 const jwks     = require('jwks-rsa')
 const jwt      = require('jsonwebtoken')
 const property = require('prop-factory')
+const url      = require('url')
 
 const {
-  applyTo: thrush, curryN, dissoc, partialRight, path, prop
+  applyTo: thrush, curryN, dissoc, partialRight, prop
 } = require('ramda')
 
 const { promisify, rename } = require('@articulate/funky')
@@ -31,14 +32,19 @@ const unauthorized = err =>
   Promise.reject(Boom.wrap(err, 401))
 
 const factory = opts => {
-  const verifyOpts = dissoc('oidcURI', opts)
+  const verifyOpts = dissoc('issWhitelist', opts)
+
+  const checkIss = token =>
+    opts.issWhitelist.indexOf(token.payload.iss) > -1
+      ? Promise.resolve(token)
+      : Promise.reject(new Error(`iss: '${token.payload.iss}' not in issWhitelist`))
 
   const getKey = property()
 
-  const getSigningKey = kid =>
+  const getSigningKey = ({ header: { kid }, payload: { iss } }) =>
     getKey()
       ? getKey()(kid)
-      : buildClient(opts.oidcURI + wellKnown)
+      : buildClient(iss + wellKnown)
         .then(getKey)
         .then(thrush(kid))
 
@@ -47,7 +53,7 @@ const factory = opts => {
   const authentic = token =>
     Promise.resolve(token)
       .then(decode)
-      .then(path(['header', 'kid']))
+      .then(checkIss)
       .then(getSigningKey)
       .then(chooseKey)
       .then(verify(token))

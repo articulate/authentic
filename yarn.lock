@@ -9,12 +9,11 @@
     joi "^10.6.0"
     ramda "^0.24.1"
 
-"@articulate/funky@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@articulate/funky/-/funky-0.1.0.tgz#d7dc756f62b1f66ba703d13e101e7ae510b625f8"
+"@articulate/funky@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@articulate/funky/-/funky-1.2.0.tgz#681776d0f5b0045f9bb00cd623cf398be9fff985"
   dependencies:
-    joi "^10.6.0"
-    ramda "^0.24.1"
+    ramda "^0.25.0"
 
 "@articulate/gimme@^1.0.0":
   version "1.0.0"
