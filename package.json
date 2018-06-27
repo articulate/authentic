@@ -23,12 +23,11 @@
     "test:coverage": "nyc yarn test"
   },
   "dependencies": {
-    "@articulate/funky": "^0.1.0",
+    "@articulate/funky": "^1.2.0",
     "@articulate/gimme": "^1.0.0",
     "boom": "5.2.0",
     "jsonwebtoken": "^8.1.1",
     "jwks-rsa": "^1.2.1",
-    "prop-factory": "^1.0.0",
     "ramda": "^0.25.0"
   },
   "devDependencies": {
@@ -37,6 +36,7 @@
     "eslint": "^4.16.0",
     "mocha": "^5.0.0",
     "nock": "^9.1.6",
-    "nyc": "^11.4.1"
+    "nyc": "^11.4.1",
+    "prop-factory": "^1.0.0"
   }
 }
