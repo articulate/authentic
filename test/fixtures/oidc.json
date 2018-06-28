@@ -1,5 +1,5 @@
 {
-  "issuer": "https://authentic.articulate.com",
+  "issuer": "https://authentic.articulate.com/",
   "authorization_endpoint": "https://authentic.articulate.com/v1/authorize",
   "token_endpoint": "https://authentic.articulate.com/v1/token",
   "userinfo_endpoint": "https://authentic.articulate.com/v1/userinfo",
