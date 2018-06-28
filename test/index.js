@@ -72,4 +72,19 @@ describe('authentic', () => {
       expect(res().output.payload.message).to.contain(badIss)
     )
   })
+
+  describe('with a null token', () => {
+    beforeEach(() =>
+      authentic(null).catch(res)
+    )
+
+    it('booms with a 401', () => {
+      expect(res().isBoom).to.be.true
+      expect(res().output.statusCode).to.equal(401)
+    })
+
+    it('mentions that the token was null', () =>
+      expect(res().output.payload.message).to.contain('null token')
+    )
+  })
 })
