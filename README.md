@@ -22,10 +22,10 @@ Initialize `authentic` with an options object containing an `issWhitelist` array
 
 | Provider | Sample `issWhitelist` |
 | -------- | ------------------- |
-| [Auth0](https://auth0.com/) | `[ 'https://${tenant}.auth0.com' ]` |
+| [Auth0](https://auth0.com/) | `[ 'https://${tenant}.auth0.com/' ]` |
 | [Okta](https://www.okta.com/) | `[ 'https://${tenant}.oktapreview.com/oauth2/${appName}' ]` |
 
-**Note:** Don't include the `/.well-known/openid-configuration` in your `issWhitelist` values, as `authentic` will add that for you.
+**Note:** The urls in the list need to be **exact matches** of the `payload.iss` values in your JWT's.
 
 Any other options passed to `authentic` will be forwarded to `jwt.verify()` for validation and parsing.  [See the list of available options here.](https://github.com/auth0/node-jsonwebtoken#jwtverifytoken-secretorpublickey-options-callback)
 
