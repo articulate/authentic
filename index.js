@@ -44,7 +44,7 @@ const factory = opts => {
   const getSigningKey = ({ header: { kid }, payload: { iss } }) =>
     clients[iss]
       ? clients[iss](kid)
-      : buildClient(iss + wellKnown)
+      : buildClient(iss.replace(/\/$/, '') + wellKnown)
         .then(cacheClient(iss))
         .then(thrush(kid))
 
