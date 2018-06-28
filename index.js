@@ -7,7 +7,7 @@ const {
   applyTo: thrush, curryN, dissoc, partialRight, prop
 } = require('ramda')
 
-const { promisify, rename } = require('@articulate/funky')
+const { promisify, rename, tapP } = require('@articulate/funky')
 
 const wellKnown = '/.well-known/openid-configuration'
 
@@ -26,6 +26,10 @@ const chooseKey = key =>
 
 const decode = partialRight(jwt.decode, [{ complete: true }])
 
+const enforce = tapP(token =>
+  token || Promise.reject(new Error('null token not allowed'))
+)
+
 const unauthorized = err =>
   Promise.reject(Boom.wrap(err, 401))
 
@@ -36,10 +40,10 @@ const factory = opts => {
   const cacheClient = iss => client =>
     clients[iss] = client
 
-  const checkIss = token =>
-    opts.issWhitelist.indexOf(token.payload.iss) > -1
-      ? Promise.resolve(token)
-      : Promise.reject(new Error(`iss '${token.payload.iss}' not in issWhitelist`))
+  const checkIss = tapP(token =>
+    opts.issWhitelist.indexOf(token.payload.iss) > -1 ||
+    Promise.reject(new Error(`iss '${token.payload.iss}' not in issWhitelist`))
+  )
 
   const getSigningKey = ({ header: { kid }, payload: { iss } }) =>
     clients[iss]
@@ -52,6 +56,7 @@ const factory = opts => {
 
   const authentic = token =>
     Promise.resolve(token)
+      .then(enforce)
       .then(decode)
       .then(checkIss)
       .then(getSigningKey)
