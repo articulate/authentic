@@ -2,7 +2,6 @@
 [![@articulate/authentic](https://img.shields.io/npm/v/@articulate/authentic.svg)](https://www.npmjs.com/package/@articulate/authentic)
 [![Build Status](https://travis-ci.org/articulate/authentic.svg?branch=master)](https://travis-ci.org/articulate/authentic)
 [![Coverage Status](https://coveralls.io/repos/github/articulate/authentic/badge.svg?branch=master)](https://coveralls.io/github/articulate/authentic?branch=master)
-[![NSP Status](https://nodesecurity.io/orgs/articulate/projects/d8462d3b-a566-4ed1-a696-c746965e49a2/badge)](https://nodesecurity.io/orgs/articulate/projects/d8462d3b-a566-4ed1-a696-c746965e49a2)
 
 Proper validation of JWT's against JWK's.
 
