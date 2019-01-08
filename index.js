@@ -4,7 +4,7 @@ const jwks     = require('jwks-rsa')
 const jwt      = require('jsonwebtoken')
 
 const {
-  applyTo: thrush, curryN, dissoc, partialRight, pipe, prop
+  applyTo: thrush, curryN, dissoc, partialRight, prop, replace
 } = require('ramda')
 
 const { promisify, rename, tapP } = require('@articulate/funky')
@@ -26,11 +26,11 @@ const chooseKey = key =>
 
 const decode = partialRight(jwt.decode, [{ complete: true }])
 
-const stripBearer = token => 
-  token ? token.replace(/^[B|b]earer /, '') : null
-
 const enforce = token =>
   token || Promise.reject(new Error('null token not allowed'))
+
+const stripBearer = 
+  replace(/^Bearer /i, '')
 
 const unauthorized = err =>
   Promise.reject(Boom.wrap(err, 401))
@@ -53,20 +53,22 @@ const factory = opts => {
         .then(cacheClient(iss))
         .then(thrush(kid))
 
-  const verify = pipe(stripBearer, curryN(2, partialRight(promisify(jwt.verify), [ verifyOpts ])))
+  const verify = curryN(2, partialRight(promisify(jwt.verify), [ verifyOpts ]))
 
   const authentic = token =>
     Promise.resolve(token)
-      .then(tapP(enforce))
-      .then(stripBearer)
       .then(decode)
       .then(tapP(checkIss))
       .then(getSigningKey)
       .then(chooseKey)
       .then(verify(token))
-      .catch(unauthorized)
 
-  return authentic
+  return token => 
+    Promise.resolve(token)
+      .then(tapP(enforce))
+      .then(stripBearer)
+      .then(authentic)
+      .catch(unauthorized)
 }
 
 module.exports = factory
