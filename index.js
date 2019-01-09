@@ -4,7 +4,7 @@ const jwks     = require('jwks-rsa')
 const jwt      = require('jsonwebtoken')
 
 const {
-  applyTo: thrush, curryN, dissoc, partialRight, prop
+  applyTo: thrush, composeP, curryN, dissoc, partialRight, prop, replace
 } = require('ramda')
 
 const { promisify, rename, tapP } = require('@articulate/funky')
@@ -27,7 +27,10 @@ const chooseKey = key =>
 const decode = partialRight(jwt.decode, [{ complete: true }])
 
 const enforce = token =>
-  token || Promise.reject(new Error('null token not allowed'))
+  token || Promise.reject(Boom.unauthorized('null token not allowed'))
+
+const stripBearer = 
+  replace(/^Bearer /i, '')
 
 const unauthorized = err =>
   Promise.reject(Boom.wrap(err, 401))
@@ -54,7 +57,6 @@ const factory = opts => {
 
   const authentic = token =>
     Promise.resolve(token)
-      .then(tapP(enforce))
       .then(decode)
       .then(tapP(checkIss))
       .then(getSigningKey)
@@ -62,7 +64,7 @@ const factory = opts => {
       .then(verify(token))
       .catch(unauthorized)
 
-  return authentic
+  return composeP(authentic, stripBearer, tapP(enforce))
 }
 
 module.exports = factory

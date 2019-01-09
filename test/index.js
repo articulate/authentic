@@ -3,10 +3,12 @@ const jwt        = require('jsonwebtoken')
 const nock       = require('nock')
 const property   = require('prop-factory')
 
-const bad   = require('./fixtures/bad-iss')
-const keys  = require('./fixtures/keys')
-const oidc  = require('./fixtures/oidc')
-const token = require('./fixtures/token')
+const bad                = require('./fixtures/bad-iss')
+const keys               = require('./fixtures/keys')
+const oidc               = require('./fixtures/oidc')
+const token              = require('./fixtures/token')
+const capitalBearerToken = 'Bearer ' + token
+const lowerBearerToken   = 'bearer ' + token
 
 const { issuer } = oidc
 
@@ -36,6 +38,34 @@ describe('authentic', () => {
   describe('with a valid jwt', () => {
     beforeEach(() =>
       authentic(token).then(res)
+    )
+
+    it('validates the jwt against the jwks', () =>
+      expect(res().sub).to.equal('00udjyjssbt2S1QVr0h7')
+    )
+
+    it('caches the jwks client', () =>
+      expect(res().sub).to.equal('00udjyjssbt2S1QVr0h7')
+    )
+  })
+
+  describe('with a valid jwt that starts with Bearer', () => {
+    beforeEach(() =>
+      authentic(capitalBearerToken).then(res)
+    )
+
+    it('validates the jwt against the jwks', () =>
+      expect(res().sub).to.equal('00udjyjssbt2S1QVr0h7')
+    )
+
+    it('caches the jwks client', () =>
+      expect(res().sub).to.equal('00udjyjssbt2S1QVr0h7')
+    )
+  })
+  
+  describe('with a valid jwt that starts with bearer', () => {
+    beforeEach(() =>
+      authentic(lowerBearerToken).then(res)
     )
 
     it('validates the jwt against the jwks', () =>
