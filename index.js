@@ -4,12 +4,18 @@ const jwks     = require('jwks-rsa')
 const jwt      = require('jsonwebtoken')
 
 const {
-  applyTo: thrush, composeP, curryN, dissoc, partialRight, prop, replace
+  applyTo: thrush, compose, composeP, curryN, dissoc, merge,
+  partialRight, prop, replace
 } = require('ramda')
 
 const { promisify, rename, tapP } = require('@articulate/funky')
 
 const wellKnown = '/.well-known/openid-configuration'
+
+const jwksSettings = {
+  cache: true,
+  rateLimit: true
+}
 
 const bindFunction = client =>
   promisify(client.getSigningKey, client)
@@ -18,7 +24,7 @@ const buildClient = url =>
   gimme({ url })
     .then(prop('body'))
     .then(rename('jwks_uri', 'jwksUri'))
-    .then(jwks)
+    .then(compose(jwks, merge(jwksSettings)))
     .then(bindFunction)
 
 const chooseKey = key =>
@@ -29,7 +35,7 @@ const decode = partialRight(jwt.decode, [{ complete: true }])
 const enforce = token =>
   token || Promise.reject(Boom.unauthorized('null token not allowed'))
 
-const stripBearer = 
+const stripBearer =
   replace(/^Bearer /i, '')
 
 const unauthorized = err =>
