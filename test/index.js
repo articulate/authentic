@@ -62,7 +62,7 @@ describe('authentic', () => {
       expect(res().sub).to.equal('00udjyjssbt2S1QVr0h7')
     )
   })
-  
+
   describe('with a valid jwt that starts with bearer', () => {
     beforeEach(() =>
       authentic(lowerBearerToken).then(res)

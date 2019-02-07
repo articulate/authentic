@@ -34,11 +34,11 @@ const stripBearer =
   replace(/^Bearer /i, '')
 
 const unauthorized = err =>
-  Promise.reject(Boom.wrap(err, 401))
+  Promise.reject(Boom.unauthorized(err))
 
 const jwksOptsDefaults = { jwks: { cache: true, rateLimit: true } }
 
-const factory = (options = {}) => {
+const factory = options => {
   const clients    = {}
   const opts = merge(options, jwksOptsDefaults)
   const verifyOpts = omit([ 'issWhitelist', 'jwks' ], opts)
