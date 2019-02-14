@@ -73,5 +73,3 @@ const factory = options => {
 }
 
 module.exports = factory
-
-module.exports = factory
