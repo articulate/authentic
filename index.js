@@ -5,7 +5,7 @@ const jwt      = require('jsonwebtoken')
 
 const {
   applyTo: thrush, compose, composeP, curryN, omit, merge,
-  partialRight, prop, replace
+  mergeDeepRight, partialRight, prop, replace
 } = require('ramda')
 
 const { promisify, rename, tapP } = require('@articulate/funky')
@@ -40,7 +40,7 @@ const jwksOptsDefaults = { jwks: { cache: true, rateLimit: true } }
 
 const factory = options => {
   const clients    = {}
-  const opts = merge(options, jwksOptsDefaults)
+  const opts       = mergeDeepRight(jwksOptsDefaults, options)
   const verifyOpts = omit([ 'issWhitelist', 'jwks' ], opts)
   const jwksOpts   = prop('jwks', opts)
 
@@ -71,5 +71,7 @@ const factory = options => {
 
   return composeP(authentic, stripBearer, tapP(enforce))
 }
+
+module.exports = factory
 
 module.exports = factory
