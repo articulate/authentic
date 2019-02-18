@@ -26,8 +26,6 @@ Initialize `authentic` with an options object containing an `issWhitelist` array
 
 **Note:** The urls in the list need to be **exact matches** of the `payload.iss` values in your JWT's.
 
-Any other options passed to `authentic` will be forwarded to `jwt.verify()` for validation and parsing.  [See the list of available options here.](https://github.com/auth0/node-jsonwebtoken#jwtverifytoken-secretorpublickey-options-callback)
-
 You'll receive a unary function which takes a JWT and returns a `Promise` that resolves with the parsed JWT payload if it is valid, or rejects with a `401` [Boom](https://github.com/hapijs/boom) error if it is invalid.
 
 ```js
@@ -39,3 +37,25 @@ const handler = req =>
   authentic(req.cookies.token)
     .then(/* the JWT has been validated */)
 ```
+
+## Options
+
+`authentic` accepts a JSON object of options that will be passed to the underlying libraries responsibile for validation.
+
+Besides the `issWhitelist` prop, any other options passed will be forwarded to `jwt.verify()` for validation and parsing.  [See the list of available options here.](https://github.com/auth0/node-jsonwebtoken#jwtverifytoken-secretorpublickey-options-callback)
+
+Options passed in under the prop `jwks` will be passed to `node-jwks-rsa`.
+We have set defaults for 2 values from `jwks`.
+
+```
+{
+  jwks: {
+    cache: true, // default from authentic
+    rateLimit: true, // default from authentic
+  },
+  issWhitelist: JSON.parse(process.env.ISS_WHITELIST)
+}
+```
+
+Available options to set for `node-jwks-rsa` can be found here. [See the list of available options here.](https://github.com/auth0/node-jwks-rsa)
+
