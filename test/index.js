@@ -13,7 +13,7 @@ const lowerBearerToken   = 'bearer ' + token
 const { issuer } = oidc
 
 const authentic = require('..')({
-  ignoreExpiration: true,
+  verify: { ignoreExpiration: true },
   issWhitelist: [ issuer ],
 })
 

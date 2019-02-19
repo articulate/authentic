@@ -40,22 +40,14 @@ const handler = req =>
 
 ## Options
 
-`authentic` accepts a JSON object of options that will be passed to the underlying libraries responsibile for validation.
+`authentic` accepts a JSON object with the following options:
 
-Besides the `issWhitelist` prop, any other options passed will be forwarded to `jwt.verify()` for validation and parsing.  [See the list of available options here.](https://github.com/auth0/node-jsonwebtoken#jwtverifytoken-secretorpublickey-options-callback)
+* `jwks` Object: options to forward to [`node-jwks-rsa`](https://github.com/auth0/node-jwks-rsa) with the following defaults:
 
-Options passed in under the prop `jwks` will be passed to `node-jwks-rsa`.
-We have set defaults for 2 values from `jwks`.
+| option      | default |
+| ----------- | ------- |
+| `cache`     | `true`  |
+| `rateLimit` | `true`  |
 
-```
-{
-  jwks: {
-    cache: true, // default from authentic
-    rateLimit: true, // default from authentic
-  },
-  issWhitelist: JSON.parse(process.env.ISS_WHITELIST)
-}
-```
-
-Available options to set for `node-jwks-rsa` can be found here. [See the list of available options here.](https://github.com/auth0/node-jwks-rsa)
-
+* `verify` Object: options to forward to `jwt.verify` from [`jsonwebtoken`](https://github.com/auth0/node-jsonwebtoken#jwtverifytoken-secretorpublickey-options-callback)
+* `issWhitelist` Array: list of trusted OIDC issuers

@@ -4,7 +4,7 @@ const jwks     = require('jwks-rsa')
 const jwt      = require('jsonwebtoken')
 
 const {
-  applyTo: thrush, compose, composeP, curryN, omit, merge,
+  applyTo: thrush, compose, composeP, curryN, merge,
   mergeDeepRight, partialRight, prop, replace
 } = require('ramda')
 
@@ -39,10 +39,12 @@ const unauthorized = err =>
 const jwksOptsDefaults = { jwks: { cache: true, rateLimit: true } }
 
 const factory = options => {
-  const clients    = {}
-  const opts       = mergeDeepRight(jwksOptsDefaults, options)
-  const verifyOpts = omit([ 'issWhitelist', 'jwks' ], opts)
-  const jwksOpts   = prop('jwks', opts)
+  const clients = {}
+  const opts = mergeDeepRight(jwksOptsDefaults, options)
+  const {
+    verify: verifyOpts = {},
+    jwks: jwksOpts = {}
+  } = opts
 
   const cacheClient = iss => client =>
     clients[iss] = client
