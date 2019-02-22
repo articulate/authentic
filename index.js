@@ -43,7 +43,7 @@ const factory = options => {
   const opts = mergeDeepRight(jwksOptsDefaults, options)
   const {
     verify: verifyOpts = {},
-    jwks: jwksOpts = {}
+    jwks: jwksOpts
   } = opts
 
   const cacheClient = iss => client =>
