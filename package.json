@@ -1,6 +1,6 @@
 {
   "name": "@articulate/authentic",
-  "version": "1.0.0",
+  "version": "0.2.0",
   "description": "Proper validation of JWT's against JWK's",
   "main": "index.js",
   "repository": "git@github.com:articulate/authentic.git",
