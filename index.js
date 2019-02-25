@@ -4,7 +4,8 @@ const jwks     = require('jwks-rsa')
 const jwt      = require('jsonwebtoken')
 
 const {
-  applyTo: thrush, composeP, curryN, dissoc, partialRight, prop, replace
+  applyTo: thrush, compose, composeP, curryN, merge,
+  mergeDeepRight, partialRight, prop, replace
 } = require('ramda')
 
 const { promisify, rename, tapP } = require('@articulate/funky')
@@ -14,11 +15,11 @@ const wellKnown = '/.well-known/openid-configuration'
 const bindFunction = client =>
   promisify(client.getSigningKey, client)
 
-const buildClient = url =>
+const buildClient = (jwksOpts, url) =>
   gimme({ url })
     .then(prop('body'))
     .then(rename('jwks_uri', 'jwksUri'))
-    .then(jwks)
+    .then(compose(jwks, merge(jwksOpts)))
     .then(bindFunction)
 
 const chooseKey = key =>
@@ -29,15 +30,21 @@ const decode = partialRight(jwt.decode, [{ complete: true }])
 const enforce = token =>
   token || Promise.reject(Boom.unauthorized('null token not allowed'))
 
-const stripBearer = 
+const stripBearer =
   replace(/^Bearer /i, '')
 
 const unauthorized = err =>
-  Promise.reject(Boom.wrap(err, 401))
+  Promise.reject(Boom.unauthorized(err))
 
-const factory = opts => {
-  const clients    = {}
-  const verifyOpts = dissoc('issWhitelist', opts)
+const jwksOptsDefaults = { jwks: { cache: true, rateLimit: true } }
+
+const factory = options => {
+  const clients = {}
+  const opts = mergeDeepRight(jwksOptsDefaults, options)
+  const {
+    verify: verifyOpts = {},
+    jwks: jwksOpts
+  } = opts
 
   const cacheClient = iss => client =>
     clients[iss] = client
@@ -49,7 +56,7 @@ const factory = opts => {
   const getSigningKey = ({ header: { kid }, payload: { iss } }) =>
     clients[iss]
       ? clients[iss](kid)
-      : buildClient(iss.replace(/\/$/, '') + wellKnown)
+      : buildClient(jwksOpts, iss.replace(/\/$/, '') + wellKnown)
         .then(cacheClient(iss))
         .then(thrush(kid))
 

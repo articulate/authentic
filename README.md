@@ -26,8 +26,6 @@ Initialize `authentic` with an options object containing an `issWhitelist` array
 
 **Note:** The urls in the list need to be **exact matches** of the `payload.iss` values in your JWT's.
 
-Any other options passed to `authentic` will be forwarded to `jwt.verify()` for validation and parsing.  [See the list of available options here.](https://github.com/auth0/node-jsonwebtoken#jwtverifytoken-secretorpublickey-options-callback)
-
 You'll receive a unary function which takes a JWT and returns a `Promise` that resolves with the parsed JWT payload if it is valid, or rejects with a `401` [Boom](https://github.com/hapijs/boom) error if it is invalid.
 
 ```js
@@ -39,3 +37,17 @@ const handler = req =>
   authentic(req.cookies.token)
     .then(/* the JWT has been validated */)
 ```
+
+## Options
+
+`authentic` accepts a JSON object with the following options:
+
+* `jwks` Object: options to forward to [`node-jwks-rsa`](https://github.com/auth0/node-jwks-rsa) with the following defaults:
+
+| option      | default |
+| ----------- | ------- |
+| `cache`     | `true`  |
+| `rateLimit` | `true`  |
+
+* `verify` Object: options to forward to `jwt.verify` from [`jsonwebtoken`](https://github.com/auth0/node-jsonwebtoken#jwtverifytoken-secretorpublickey-options-callback)
+* `issWhitelist` Array: list of trusted OIDC issuers
