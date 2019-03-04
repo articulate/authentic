@@ -9,7 +9,7 @@ const {
   mergeDeepRight, partialRight, pathEq, prop, replace, when,
 } = require('ramda')
 
-const { promisify, rename, tapP } = require('@articulate/funky')
+const { promisify, reject, rename, tapP } = require('@articulate/funky')
 
 const wellKnown = '/.well-known/openid-configuration'
 
@@ -29,10 +29,10 @@ const chooseKey = key =>
 const decode = partialRight(jwt.decode, [{ complete: true }])
 
 const enforce = token =>
-  token || Promise.reject(Boom.unauthorized('null token not allowed'))
+  token || reject(Boom.unauthorized('null token not allowed'))
 
 const forbidden = err =>
-  Promise.reject(Boom.forbidden(err))
+  reject(Boom.forbidden(err))
 
 const isIssWhitelistError =
   pathEq(['name'], 'IssWhitelistError')
@@ -41,10 +41,10 @@ const stripBearer =
   replace(/^Bearer /i, '')
 
 const throwIfNull =
-  when(isNil, () => Promise.reject(new Error('invalid token')))
+  when(isNil, () => reject('invalid token'))
 
 const unauthorized = err =>
-  Promise.reject(Boom.unauthorized(err))
+  reject(Boom.unauthorized(err))
 
 const deny =
   ifElse(isIssWhitelistError, forbidden, unauthorized)
@@ -64,7 +64,7 @@ const factory = options => {
 
   const checkIss = token =>
     opts.issWhitelist.indexOf(token.payload.iss) > -1 ||
-    Promise.reject(new IssWhitelistError(`iss '${token.payload.iss}' not in issWhitelist`))
+    reject(new IssWhitelistError(`iss '${token.payload.iss}' not in issWhitelist`))
 
   const getSigningKey = ({ header: { kid }, payload: { iss } }) =>
     clients[iss]
