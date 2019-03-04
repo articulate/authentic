@@ -2,6 +2,7 @@ const Boom     = require('boom')
 const gimme    = require('@articulate/gimme')
 const jwks     = require('jwks-rsa')
 const jwt      = require('jsonwebtoken')
+const { IssWhitelistError } = require('./lib/errors')
 
 const {
   applyTo: thrush, compose, composeP, curryN, isNil, ifElse, merge,
@@ -33,8 +34,8 @@ const enforce = token =>
 const forbidden = err =>
   Promise.reject(Boom.forbidden(err))
 
-const isExpired =
-  pathEq(['name'], 'TokenExpiredError')
+const isIssWhitelistError =
+  pathEq(['name'], 'IssWhitelistError')
 
 const stripBearer =
   replace(/^Bearer /i, '')
@@ -46,7 +47,7 @@ const unauthorized = err =>
   Promise.reject(Boom.unauthorized(err))
 
 const deny =
-  ifElse(isExpired, forbidden, unauthorized)
+  ifElse(isIssWhitelistError, forbidden, unauthorized)
 
 const jwksOptsDefaults = { jwks: { cache: true, rateLimit: true } }
 
@@ -63,7 +64,7 @@ const factory = options => {
 
   const checkIss = token =>
     opts.issWhitelist.indexOf(token.payload.iss) > -1 ||
-    Promise.reject(new Error(`iss '${token.payload.iss}' not in issWhitelist`))
+    Promise.reject(new IssWhitelistError(`iss '${token.payload.iss}' not in issWhitelist`))
 
   const getSigningKey = ({ header: { kid }, payload: { iss } }) =>
     clients[iss]
