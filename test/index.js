@@ -126,9 +126,9 @@ describe('authentic', () => {
         authentic(bad).catch(res)
       )
 
-      it('booms with a 401', () => {
+      it('booms with a 403', () => {
         expect(res().isBoom).to.be.true
-        expect(res().output.statusCode).to.equal(401)
+        expect(res().output.statusCode).to.equal(403)
       })
 
       it('includes the invalid iss in the error message', () =>
