@@ -5,8 +5,8 @@ const jwt      = require('jsonwebtoken')
 const { IssWhitelistError } = require('./lib/errors')
 
 const {
-  applyTo: thrush, compose, composeP, curryN, isNil, ifElse, merge,
-  mergeDeepRight, partialRight, pathEq, prop, replace, when,
+  applyTo: thrush, compose, composeP, curryN, is, isNil, ifElse,
+  merge, mergeDeepRight, partialRight, prop, replace, when
 } = require('ramda')
 
 const { promisify, reject, rename, tapP } = require('@articulate/funky')
@@ -29,13 +29,10 @@ const chooseKey = key =>
 const decode = partialRight(jwt.decode, [{ complete: true }])
 
 const enforce = token =>
-  token || reject(Boom.unauthorized('null token not allowed'))
+  token || unauthorized('null token not allowed')
 
 const forbidden = err =>
   reject(Boom.forbidden(err))
-
-const isIssWhitelistError =
-  pathEq(['name'], 'IssWhitelistError')
 
 const stripBearer =
   replace(/^Bearer /i, '')
@@ -47,7 +44,7 @@ const unauthorized = err =>
   reject(Boom.unauthorized(err))
 
 const deny =
-  ifElse(isIssWhitelistError, forbidden, unauthorized)
+  ifElse(is(IssWhitelistError), forbidden, unauthorized)
 
 const jwksOptsDefaults = { jwks: { cache: true, rateLimit: true } }
 
