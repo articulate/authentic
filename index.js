@@ -2,13 +2,14 @@ const Boom     = require('boom')
 const gimme    = require('@articulate/gimme')
 const jwks     = require('jwks-rsa')
 const jwt      = require('jsonwebtoken')
+const { IssWhitelistError } = require('./lib/errors')
 
 const {
-  applyTo: thrush, compose, composeP, curryN, merge,
-  mergeDeepRight, partialRight, prop, replace
+  applyTo: thrush, compose, composeP, curryN, is, isNil, ifElse,
+  merge, mergeDeepRight, partialRight, prop, replace, when
 } = require('ramda')
 
-const { promisify, rename, tapP } = require('@articulate/funky')
+const { promisify, reject, rename, tapP } = require('@articulate/funky')
 
 const wellKnown = '/.well-known/openid-configuration'
 
@@ -28,13 +29,22 @@ const chooseKey = key =>
 const decode = partialRight(jwt.decode, [{ complete: true }])
 
 const enforce = token =>
-  token || Promise.reject(Boom.unauthorized('null token not allowed'))
+  token || unauthorized('null token not allowed')
+
+const forbidden = err =>
+  reject(Boom.forbidden(err))
 
 const stripBearer =
   replace(/^Bearer /i, '')
 
+const throwIfNull =
+  when(isNil, () => reject('invalid token'))
+
 const unauthorized = err =>
-  Promise.reject(Boom.unauthorized(err))
+  reject(Boom.unauthorized(err))
+
+const deny =
+  ifElse(is(IssWhitelistError), forbidden, unauthorized)
 
 const jwksOptsDefaults = { jwks: { cache: true, rateLimit: true } }
 
@@ -51,7 +61,7 @@ const factory = options => {
 
   const checkIss = token =>
     opts.issWhitelist.indexOf(token.payload.iss) > -1 ||
-    Promise.reject(new Error(`iss '${token.payload.iss}' not in issWhitelist`))
+    reject(new IssWhitelistError(`iss '${token.payload.iss}' not in issWhitelist`))
 
   const getSigningKey = ({ header: { kid }, payload: { iss } }) =>
     clients[iss]
@@ -65,11 +75,12 @@ const factory = options => {
   const authentic = token =>
     Promise.resolve(token)
       .then(decode)
+      .then(throwIfNull)
       .then(tapP(checkIss))
       .then(getSigningKey)
       .then(chooseKey)
       .then(verify(token))
-      .catch(unauthorized)
+      .catch(deny)
 
   return composeP(authentic, stripBearer, tapP(enforce))
 }
