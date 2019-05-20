@@ -13,13 +13,13 @@ declare module '@articulate/authentic' {
   }
 
   interface JWKSOpts {
-    cache?: boolean,
+    cache?: boolean
     rateLimit?: boolean
   }
 
   interface AuthenticOpts {
-    issWhitelist: string[],
-    jwks?: JWKSOpts,
+    issWhitelist: string[]
+    jwks?: JWKSOpts
     verify?: VerifyOpts
   }
 
@@ -32,19 +32,16 @@ declare module '@articulate/authentic' {
   namespace Authentic {
     interface JWT {
       // Standard JWT claims
-      aud: string,
-      cid?: number,
-      exp: number,
-      iat: number,
+      aud: string
+      cid?: number
+      exp: number
+      iat: number
       iss: string
-      jti?: number,
+      jti?: number
       scp?: Array<String>
       sub: string
-      uid?: number,
-
-      // Custom JWT claims
-      aid?: string,
-      staff?: boolean,
+      uid?: number
+      [key: string]: any
     }
   }
 
