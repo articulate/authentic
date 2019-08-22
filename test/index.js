@@ -34,7 +34,7 @@ describe('authentic', () => {
 
   describe('setup with minimal valid configuration options', () => {
     const authentic = require('..')({
-      issWhitelist: [ issuer ],
+      issWhitelist: [ issuer ]
     })
 
     describe('with an expired jwt', () => {
@@ -45,6 +45,26 @@ describe('authentic', () => {
       it('booms with a 401', () => {
         expect(res().isBoom).to.be.true
         expect(res().output.statusCode).to.equal(401)
+        expect(res().data).to.be.null
+      })
+    })
+  })
+  
+  describe('setup with decodedInError set to true', () => {
+    const authentic = require('..')({
+      issWhitelist: [ issuer ],
+      decodedInError: true
+    })
+
+    describe('with an expired jwt', () => {
+      beforeEach(() =>
+        authentic(token).catch(res)
+      )
+
+      it('booms with a 401', () => {
+        expect(res().isBoom).to.be.true
+        expect(res().output.statusCode).to.equal(401)
+        expect(res().data.payload.sub).to.equal('00udjyjssbt2S1QVr0h7')
       })
     })
   })

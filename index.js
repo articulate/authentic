@@ -56,6 +56,14 @@ const factory = options => {
     jwks: jwksOpts
   } = opts
 
+  const throwWithData = data => err => {
+    if (opts.decodedInError) { 
+      err.data = data
+    }
+
+    throw err
+  }
+
   const cacheClient = iss => client =>
     clients[iss] = client
 
@@ -70,15 +78,19 @@ const factory = options => {
         .then(cacheClient(iss))
         .then(thrush(kid))
 
-  const verify = curryN(2, partialRight(promisify(jwt.verify), [ verifyOpts ]))
+  const jwtVerify = curryN(2, partialRight(promisify(jwt.verify), [ verifyOpts ]))
+
+  const verify = token => decoded => 
+    getSigningKey(decoded)
+      .then(chooseKey)
+      .then(jwtVerify(token))
+      .catch(throwWithData(decoded))
 
   const authentic = token =>
     Promise.resolve(token)
       .then(decode)
       .then(throwIfNull)
       .then(tapP(checkIss))
-      .then(getSigningKey)
-      .then(chooseKey)
       .then(verify(token))
       .catch(deny)
 
