@@ -51,4 +51,4 @@ const handler = req =>
 
 * `verify` Object: options to forward to `jwt.verify` from [`jsonwebtoken`](https://github.com/auth0/node-jsonwebtoken#jwtverifytoken-secretorpublickey-options-callback)
 * `issWhitelist` Array: list of trusted OIDC issuers
-* `decodedInErr` Bool: set to `true` to recieve the decoded token as the `data` property of the error when verification fails
+* `claimsInError` Array: list of jwt payload claims to receive as the `data` propery of the error when verification fails.  When a list is not provided a `data` property will not be added to the error.
