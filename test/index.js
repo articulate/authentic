@@ -49,11 +49,11 @@ describe('authentic', () => {
       })
     })
   })
-  
-  describe('setup with decodedInError set to true', () => {
+
+  describe('setup with invalid claimsInError value', () => {
     const authentic = require('..')({
       issWhitelist: [ issuer ],
-      decodedInError: true
+      claimsInError: 'sub'
     })
 
     describe('with an expired jwt', () => {
@@ -64,7 +64,28 @@ describe('authentic', () => {
       it('booms with a 401', () => {
         expect(res().isBoom).to.be.true
         expect(res().output.statusCode).to.equal(401)
-        expect(res().data.payload.sub).to.equal('00udjyjssbt2S1QVr0h7')
+        expect(res().data).to.be.null
+      })
+    })
+  })
+
+  describe('setup with claimsInError set to a list of claim(s)', () => {
+    const authentic = require('..')({
+      issWhitelist: [ issuer ],
+      claimsInError: [ 'sub', 'iss' ]
+    })
+
+    describe('with an expired jwt', () => {
+      beforeEach(() =>
+        authentic(token).catch(res)
+      )
+
+      it('booms with a 401', () => {
+        expect(res().isBoom).to.be.true
+        expect(res().output.statusCode).to.equal(401)
+        expect(res().data).to.have.keys(['sub', 'iss'])
+        expect(res().data.sub).to.equal('00udjyjssbt2S1QVr0h7')
+        expect(res().data.iss).to.equal('https://authentic.articulate.com/')
       })
     })
   })
