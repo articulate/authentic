@@ -11,7 +11,6 @@ const {
 
 const { promisify, reject, rename, tapP } = require('@articulate/funky')
 
-const { TokenExpiredError } = jwt
 const wellKnown = '/.well-known/openid-configuration'
 
 const bindFunction = client =>
