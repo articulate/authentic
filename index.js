@@ -11,6 +11,7 @@ const {
 
 const { promisify, reject, rename, tapP } = require('@articulate/funky')
 
+const { TokenExpiredError } = jwt
 const wellKnown = '/.well-known/openid-configuration'
 
 const bindFunction = client =>
@@ -71,10 +72,14 @@ const factory = options => {
     opts.issWhitelist.indexOf(token.payload.iss) > -1 ||
     reject(new IssWhitelistError(`iss '${token.payload.iss}' not in issWhitelist`))
 
-  const checkExp = ({ payload: { exp } }) =>
-    !verifyOpts.ignoreExpiration
-    && exp < Date.now() / 1000
-    && unauthorized('token expired')
+  const checkExp = ({ payload }) => {
+    const { exp } = payload
+    const { ignoreExpiration } = verifyOpts
+    const isExpired = !ignoreExpiration && exp < Date.now() / 1000
+    const error = new TokenExpiredError('Token expired', new Date(exp * 1000))
+
+    return isExpired && reject(error).catch(throwWithData({ payload }))
+  }
 
   const getSigningKey = ({ header: { kid }, payload: { iss } }) =>
     clients[iss]
