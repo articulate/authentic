@@ -75,7 +75,7 @@ const factory = options => {
   const checkExp = ({ payload: { exp } }) =>
     !verifyOpts.ignoreExpiration
     && exp < Date.now() / 1000
-    && reject(new TokenExpiredError('Token expired', new Date(exp * 1000)))
+    && unauthorized('token expired')
 
   const getSigningKey = ({ header: { kid }, payload: { iss } }) =>
     clients[iss]
