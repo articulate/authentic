@@ -73,8 +73,9 @@ const factory = options => {
     reject(new IssWhitelistError(`iss '${token.payload.iss}' not in issWhitelist`))
 
   const checkExp = ({ payload: { exp } }) =>
-    exp < Date.now() / 1000 &&
-    reject(new TokenExpiredError('Token expired', new Date(exp * 1000)))
+    !verifyOpts.ignoreExpiration
+    && exp < Date.now() / 1000
+    && reject(new TokenExpiredError('Token expired', new Date(exp * 1000)))
 
   const getSigningKey = ({ header: { kid }, payload: { iss } }) =>
     clients[iss]
