@@ -76,7 +76,7 @@ const factory = options => {
     const { ignoreExpiration } = verifyOpts
     const { TokenExpiredError } = jwt
     const isExpired = !ignoreExpiration && exp < Date.now() / 1000
-    const error = new TokenExpiredError('Token expired', new Date(exp * 1000))
+    const error = new TokenExpiredError('jwt expired', new Date(exp * 1000))
 
     return isExpired && reject(error).catch(throwWithData({ payload }))
   }
