@@ -11,7 +11,6 @@ const {
 
 const { promisify, reject, rename, tapP } = require('@articulate/funky')
 
-const { TokenExpiredError } = jwt
 const wellKnown = '/.well-known/openid-configuration'
 
 const bindFunction = client =>
@@ -75,6 +74,7 @@ const factory = options => {
   const checkExp = ({ payload }) => {
     const { exp } = payload
     const { ignoreExpiration } = verifyOpts
+    const { TokenExpiredError } = jwt
     const isExpired = !ignoreExpiration && exp < Date.now() / 1000
     const error = new TokenExpiredError('Token expired', new Date(exp * 1000))
 
