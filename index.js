@@ -2,15 +2,18 @@ const Boom     = require('boom')
 const gimme    = require('@articulate/gimme')
 const jwks     = require('jwks-rsa')
 const jwt      = require('jsonwebtoken')
+
 const { IssWhitelistError } = require('./lib/errors')
 
 const {
-  applyTo: thrush, compose, composeP, curryN, is, isNil, ifElse,
-  merge, mergeDeepRight, partialRight, pick, prop, replace, when
+  allPass, always, applyTo: thrush, complement, compose, composeP,
+  curryN, gt, is, isNil, ifElse, merge, mergeDeepRight, partialRight,
+  pick, prop, replace, when
 } = require('ramda')
 
 const { promisify, reject, rename, tapP } = require('@articulate/funky')
 
+const { TokenExpiredError } = jwt
 const wellKnown = '/.well-known/openid-configuration'
 
 const bindFunction = client =>
@@ -34,8 +37,17 @@ const enforce = token =>
 const forbidden = err =>
   reject(Boom.forbidden(err))
 
+const ignoreExp = ({ ignoreExpiration }) =>
+  always(!ignoreExpiration)
+
 const stripBearer =
   replace(/^Bearer /i, '')
+
+const throwIfExpired = opts =>
+  when(
+    allPass([ignoreExp(opts), complement(isNil), gt(Date.now() / 1000)]),
+    exp => reject(new TokenExpiredError('jwt expired', new Date(exp * 1000)))
+  )
 
 const throwIfNull =
   when(isNil, () => reject('invalid token'))
@@ -71,15 +83,11 @@ const factory = options => {
     opts.issWhitelist.indexOf(token.payload.iss) > -1 ||
     reject(new IssWhitelistError(`iss '${token.payload.iss}' not in issWhitelist`))
 
-  const checkExp = ({ payload }) => {
-    const { exp } = payload
-    const { ignoreExpiration } = verifyOpts
-    const { TokenExpiredError } = jwt
-    const isExpired = !ignoreExpiration && exp < Date.now() / 1000
-    const error = new TokenExpiredError('jwt expired', new Date(exp * 1000))
-
-    return isExpired && reject(error).catch(throwWithData({ payload }))
-  }
+  const checkExp = ({ payload }) =>
+    Promise.resolve(payload)
+      .then(prop('exp'))
+      .then(throwIfExpired(verifyOpts))
+      .catch(throwWithData({ payload }))
 
   const getSigningKey = ({ header: { kid }, payload: { iss } }) =>
     clients[iss]
