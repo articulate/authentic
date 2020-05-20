@@ -166,7 +166,6 @@ describe('authentic', () => {
       })
 
       it('never verifies token', () => {
-        res()
         expect(verify.called).to.be.false
       })
     })
