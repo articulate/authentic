@@ -39,6 +39,6 @@
     "nock": "10.x.x",
     "nyc": "13.x.x",
     "prop-factory": "^1.0.0",
-    "sinon": "^9.0.2"
+    "sinon": "7.5.x"
   }
 }
