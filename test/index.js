@@ -2,20 +2,19 @@ const { expect } = require('chai')
 const jwt        = require('jsonwebtoken')
 const nock       = require('nock')
 const property   = require('prop-factory')
+const sinon      = require('sinon')
 
-const bad                = require('./fixtures/bad-iss')
-const keys               = require('./fixtures/keys')
-const oidc               = require('./fixtures/oidc')
-const token              = require('./fixtures/token')
-const capitalBearerToken = 'Bearer ' + token
-const lowerBearerToken   = 'bearer ' + token
+const bad   = require('./fixtures/bad-iss')
+const keys  = require('./fixtures/keys')
+const oidc  = require('./fixtures/oidc')
+const token = require('./fixtures/token')
+
+const capitalBearerToken   = 'Bearer ' + token
+const lowerBearerToken     = 'bearer ' + token
 const malformedBearerToken = 'Bearer' + token.slice(0, 200)
 
 const { issuer } = oidc
-
-
 const badIss = jwt.decode(bad, { complete: true }).payload.iss
-
 const wellKnown = '/.well-known/openid-configuration'
 
 describe('authentic', () => {
@@ -150,16 +149,25 @@ describe('authentic', () => {
     })
 
     describe('with an expired jwt', () => {
+      const verify = sinon.stub()
+
       beforeEach(() => {
         const auth = require('..')({
           issWhitelist: [ issuer ],
+          jwtAdapter: { verify }
         })
+
         auth(token).catch(res)
       })
 
       it('booms with a 401', () => {
         expect(res().isBoom).to.be.true
         expect(res().output.statusCode).to.equal(401)
+      })
+
+      it('never verifies token', () => {
+        res()
+        expect(verify.called).to.be.false
       })
     })
 

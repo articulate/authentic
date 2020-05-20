@@ -29,7 +29,8 @@ const buildClient = (jwksOpts, url) =>
 const chooseKey = key =>
   key.publicKey || key.rsaPublicKey
 
-const decode = partialRight(jwt.decode, [{ complete: true }])
+const decode = jwtDecode =>
+  partialRight(jwtDecode, [{ complete: true }])
 
 const enforce = token =>
   token || unauthorized('null token not allowed')
@@ -63,10 +64,8 @@ const jwksOptsDefaults = { jwks: { cache: true, rateLimit: true } }
 const factory = options => {
   const clients = {}
   const opts = mergeDeepRight(jwksOptsDefaults, options)
-  const {
-    verify: verifyOpts = {},
-    jwks: jwksOpts
-  } = opts
+  const { verify: verifyOpts = {}, jwks: jwksOpts, jwtAdapter = {} } = opts
+  const { decode: jwtDecode, verify: jwtVerify } = merge(jwt, jwtAdapter)
 
   const throwWithData = data => err => {
     if (Array.isArray(opts.claimsInError)) {
@@ -96,17 +95,18 @@ const factory = options => {
         .then(cacheClient(iss))
         .then(thrush(kid))
 
-  const jwtVerify = curryN(2, partialRight(promisify(jwt.verify), [ verifyOpts ]))
+  const verifyToken =
+    curryN(2, partialRight(promisify(jwtVerify), [ verifyOpts ]))
 
   const verify = token => decoded =>
     getSigningKey(decoded)
       .then(chooseKey)
-      .then(jwtVerify(token))
+      .then(verifyToken(token))
       .catch(throwWithData(decoded))
 
   const authentic = token =>
     Promise.resolve(token)
-      .then(decode)
+      .then(decode(jwtDecode))
       .then(throwIfNull)
       .then(tapP(checkIss))
       .then(tapP(checkExp))
