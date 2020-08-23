@@ -1,5 +1,5 @@
+const axios    = require('axios')
 const Boom     = require('boom')
-const gimme    = require('@articulate/gimme')
 const jwks     = require('jwks-rsa')
 const jwt      = require('jsonwebtoken')
 const { IssWhitelistError } = require('./lib/errors')
@@ -17,8 +17,8 @@ const bindFunction = client =>
   promisify(client.getSigningKey, client)
 
 const buildClient = (jwksOpts, url) =>
-  gimme({ url })
-    .then(prop('body'))
+  axios.get(url)
+    .then(prop('data'))
     .then(rename('jwks_uri', 'jwksUri'))
     .then(compose(jwks, merge(jwksOpts)))
     .then(bindFunction)
