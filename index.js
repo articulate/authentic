@@ -2,19 +2,19 @@ const axios    = require('axios')
 const Boom     = require('boom')
 const jwks     = require('jwks-rsa')
 const jwt      = require('jsonwebtoken')
+const { promisify } = require('util')
 const { IssWhitelistError } = require('./lib/errors')
+const { rename, tapP } = require('./lib/helpers')
 
 const {
   applyTo: thrush, compose, composeP, curryN, is, isNil, ifElse,
   merge, mergeDeepRight, partialRight, pick, prop, replace, when
 } = require('ramda')
 
-const { promisify, reject, rename, tapP } = require('@articulate/funky')
-
 const wellKnown = '/.well-known/openid-configuration'
 
 const bindFunction = client =>
-  promisify(client.getSigningKey, client)
+  promisify(client.getSigningKey.bind(client))
 
 const buildClient = (jwksOpts, url) =>
   axios.get(url)
@@ -32,16 +32,16 @@ const enforce = token =>
   token || unauthorized('null token not allowed')
 
 const forbidden = err =>
-  reject(Boom.forbidden(err))
+  Promise.reject(Boom.forbidden(err))
 
 const stripBearer =
   replace(/^Bearer /i, '')
 
 const throwIfNull =
-  when(isNil, () => reject('invalid token'))
+  when(isNil, () => Promise.reject('invalid token'))
 
 const unauthorized = err =>
-  reject(Boom.unauthorized(err))
+  Promise.reject(Boom.unauthorized(err))
 
 const deny =
   ifElse(is(IssWhitelistError), forbidden, unauthorized)
@@ -69,7 +69,7 @@ const factory = options => {
 
   const checkIss = token =>
     opts.issWhitelist.indexOf(token.payload.iss) > -1 ||
-    reject(new IssWhitelistError(`iss '${token.payload.iss}' not in issWhitelist`))
+    Promise.reject(new IssWhitelistError(`iss '${token.payload.iss}' not in issWhitelist`))
 
   const getSigningKey = ({ header: { kid }, payload: { iss } }) =>
     clients[iss]

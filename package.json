@@ -24,7 +24,6 @@
     "test:coverage": "nyc yarn test"
   },
   "dependencies": {
-    "@articulate/funky": "^1.2.0",
     "axios": "^0.20.0",
     "boom": "7.3.x",
     "jsonwebtoken": "^8.1.1",
