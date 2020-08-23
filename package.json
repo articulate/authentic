@@ -28,7 +28,7 @@
     "@articulate/gimme": "^1.0.0",
     "boom": "7.3.x",
     "jsonwebtoken": "^8.1.1",
-    "jwks-rsa": "^1.2.1",
+    "jwks-rsa": "^1.9.0",
     "ramda": "^0.25.0"
   },
   "devDependencies": {
