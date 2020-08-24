@@ -24,7 +24,6 @@
     "test:coverage": "nyc yarn test"
   },
   "dependencies": {
-    "@ianwalter/merge": "^9.0.1",
     "axios": "^0.20.0",
     "boom": "7.3.x",
     "jsonwebtoken": "^8.1.1",

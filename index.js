@@ -1,5 +1,4 @@
 const axios                 = require('axios')
-const merge                 = require('@ianwalter/merge')
 const Boom                  = require('boom')
 const jwks                  = require('jwks-rsa')
 const jwt                   = require('jsonwebtoken')
@@ -51,7 +50,11 @@ const jwksOptsDefaults = { jwks: { cache: true, rateLimit: true } }
 
 const factory = options => {
   const clients = {}
-  const opts = merge(jwksOptsDefaults, options)
+  
+  const opts = Object.assign({}, jwksOptsDefaults, options, {
+    jwks: Object.assign({}, jwksOptsDefaults.jwks, options.jwks)
+  })
+
   const {
     verify: verifyOpts = {},
     jwks: jwksOpts
