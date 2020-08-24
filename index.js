@@ -101,8 +101,7 @@ const factory = options => {
 
   return token =>
     Promise.resolve(token)
-      .then(enforce)
-      .then(() => token)
+      .then(tapP(enforce))
       .then(stripBearer)
       .then(authentic)
 }
