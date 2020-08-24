@@ -1,5 +1,5 @@
 const axios                 = require('axios')
-const merge                 = require('merge')
+const merge                 = require('@ianwalter/merge')
 const Boom                  = require('boom')
 const jwks                  = require('jwks-rsa')
 const jwt                   = require('jsonwebtoken')
