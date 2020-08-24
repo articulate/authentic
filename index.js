@@ -1,5 +1,5 @@
 const axios                 = require('axios')
-const deepmerge             = require('deepmerge')
+const merge                 = require('merge')
 const Boom                  = require('boom')
 const jwks                  = require('jwks-rsa')
 const jwt                   = require('jsonwebtoken')
@@ -51,7 +51,7 @@ const jwksOptsDefaults = { jwks: { cache: true, rateLimit: true } }
 
 const factory = options => {
   const clients = {}
-  const opts = deepmerge(jwksOptsDefaults, options)
+  const opts = merge(jwksOptsDefaults, options)
   const {
     verify: verifyOpts = {},
     jwks: jwksOpts
