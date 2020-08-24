@@ -50,7 +50,7 @@ const jwksOptsDefaults = { jwks: { cache: true, rateLimit: true } }
 
 const factory = options => {
   const clients = {}
-  
+
   const opts = Object.assign({}, jwksOptsDefaults, options, {
     jwks: Object.assign({}, jwksOptsDefaults.jwks, options.jwks)
   })
