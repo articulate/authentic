@@ -7,6 +7,7 @@ const { promisify }         = require('util')
 const { IssWhitelistError } = require('./lib/errors')
 const { rename, tapP }      = require('./lib/helpers')
 
+const { TokenExpiredError } = jwt
 const wellKnown = '/.well-known/openid-configuration'
 
 const bindFunction = client =>
@@ -36,6 +37,12 @@ const stripBearer = str =>
 
 const throwIfNull = val =>
   val == null ? Promise.reject('invalid token') : val
+
+const throwIfExpired = ({ ignoreExpiration }) => exp => {
+  if (!ignoreExpiration && exp && exp > (Date.now() / 1000)) {
+    Promise.reject(new TokenExpiredError('JWT expired', new Date(exp * 1000)))
+  }
+}
 
 const unauthorized = err =>
   Promise.reject(Boom.unauthorized(err))
@@ -75,6 +82,12 @@ const factory = options => {
     opts.issWhitelist.indexOf(token.payload.iss) > -1 ||
     Promise.reject(new IssWhitelistError(`iss '${token.payload.iss}' not in issWhitelist`))
 
+  const checkExp = ({ payload }) =>
+    Promise.resolve(payload)
+      .then(res => res.exp)
+      .then(throwIfExpired(verifyOpts))
+      .catch(throwWithData({ payload }))
+
   const getSigningKey = ({ header: { kid }, payload: { iss } }) =>
     clients[iss]
       ? clients[iss](kid)
@@ -96,6 +109,7 @@ const factory = options => {
       .then(decode)
       .then(throwIfNull)
       .then(tapP(checkIss))
+      .then(tapP(checkExp))
       .then(verify(token))
       .catch(deny)
 

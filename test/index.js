@@ -2,6 +2,7 @@ const { expect } = require('chai')
 const jwt        = require('jsonwebtoken')
 const nock       = require('nock')
 const property   = require('prop-factory')
+const sinon      = require('sinon')
 
 const bad                = require('./fixtures/bad-iss')
 const keys               = require('./fixtures/keys')
@@ -145,9 +146,12 @@ describe('authentic', () => {
       })
 
       describe('with an expired jwt', () => {
+        const verify = sinon.stub()
+
         beforeEach(() => {
           const auth = require('..')({
             issWhitelist: [ issuer ],
+            jwtAdapter: { verify }
           })
           auth(token).catch(res)
         })
@@ -155,6 +159,10 @@ describe('authentic', () => {
         it('booms with a 401', () => {
           expect(res().isBoom).to.be.true
           expect(res().output.statusCode).to.equal(401)
+        })
+
+        it('never verifies token', () => {
+          expect(verify.called).to.be.false
         })
       })
 
