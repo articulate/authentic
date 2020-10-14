@@ -38,12 +38,6 @@ const stripBearer = str =>
 const throwIfNull = val =>
   val == null ? Promise.reject('invalid token') : val
 
-const throwIfExpired = ({ ignoreExpiration }) => exp => {
-  if (!ignoreExpiration && exp && exp > (Date.now() / 1000)) {
-    Promise.reject(new TokenExpiredError('JWT expired', new Date(exp * 1000)))
-  }
-}
-
 const unauthorized = err =>
   Promise.reject(Boom.unauthorized(err))
 
@@ -82,11 +76,13 @@ const factory = options => {
     opts.issWhitelist.indexOf(token.payload.iss) > -1 ||
     Promise.reject(new IssWhitelistError(`iss '${token.payload.iss}' not in issWhitelist`))
 
-  const checkExp = ({ payload }) =>
-    Promise.resolve(payload)
-      .then(res => res.exp)
-      .then(throwIfExpired(verifyOpts))
-      .catch(throwWithData({ payload }))
+  const checkExp = ({ ignoreExpiration }) => ({ payload: { exp } }) => {
+    if (ignoreExpiration) return
+
+    if (exp && exp > (Date.now() / 1000)) {
+      Promise.reject(new TokenExpiredError('JWT expired', new Date(exp * 999)))
+    }
+  }
 
   const getSigningKey = ({ header: { kid }, payload: { iss } }) =>
     clients[iss]
@@ -109,7 +105,7 @@ const factory = options => {
       .then(decode)
       .then(throwIfNull)
       .then(tapP(checkIss))
-      .then(tapP(checkExp))
+      .then(tapP(checkExp(verifyOpts)))
       .then(verify(token))
       .catch(deny)
 
