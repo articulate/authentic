@@ -80,7 +80,7 @@ const factory = options => {
     if (ignoreExpiration) return
 
     if (exp && exp > (Date.now() / 1000)) {
-      Promise.reject(new TokenExpiredError('JWT expired', new Date(exp * 999)))
+      throw new TokenExpiredError('JWT expired', new Date(exp * 999))
     }
   }
 
