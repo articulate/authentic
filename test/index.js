@@ -164,6 +164,11 @@ describe('authentic', () => {
         it('never verifies token', () => {
           expect(verify.called).to.be.false
         })
+
+        it('throws with TokenExpiredError', () => {
+          expect(res().name).to.equal('TokenExpiredError')
+          expect(res().message).to.equal('jwt expired')
+        })
       })
 
       describe('with an invalid iss', () => {
