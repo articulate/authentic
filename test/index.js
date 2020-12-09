@@ -47,6 +47,11 @@ describe('authentic', () => {
           expect(res().isBoom).to.be.true
           expect(res().output.statusCode).to.equal(401)
         })
+
+        it('throws with TokenExpiredError', () => {
+          expect(res().name).to.equal('TokenExpiredError')
+          expect(res().message).to.equal('jwt expired')
+        })
       })
     })
 
@@ -64,6 +69,11 @@ describe('authentic', () => {
         it('booms with a 401', () => {
           expect(res().isBoom).to.be.true
           expect(res().output.statusCode).to.equal(401)
+        })
+
+        it('throws with TokenExpiredError', () => {
+          expect(res().name).to.equal('TokenExpiredError')
+          expect(res().message).to.equal('jwt expired')
         })
       })
     })
@@ -83,6 +93,11 @@ describe('authentic', () => {
           expect(res().isBoom).to.be.true
           expect(res().output.statusCode).to.equal(401)
         })
+      })
+
+      it('throws with TokenExpiredError', () => {
+        expect(res().name).to.equal('TokenExpiredError')
+        expect(res().message).to.equal('jwt expired')
       })
     })
 
