@@ -79,7 +79,7 @@ const factory = options => {
   const checkExp = ({ ignoreExpiration }) => ({ payload: { exp } }) => {
     if (ignoreExpiration) return
 
-    if (exp && exp > (Date.now() / 1000)) {
+    if (exp && exp <= (Date.now() / 1000)) {
       throw new TokenExpiredError('JWT expired', new Date(exp * 999))
     }
   }
