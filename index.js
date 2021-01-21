@@ -9,6 +9,9 @@ const { rename, tapP }      = require('./lib/helpers')
 
 const wellKnown = '/.well-known/openid-configuration'
 
+const addHttps = url =>
+  /^http[s]?:\/\//.test(url) ? url : 'https://' + url
+
 const bindFunction = client =>
   promisify(client.getSigningKey.bind(client))
 
@@ -78,7 +81,7 @@ const factory = options => {
   const getSigningKey = ({ header: { kid }, payload: { iss } }) =>
     clients[iss]
       ? clients[iss](kid)
-      : buildClient(jwksOpts, iss.replace(/\/$/, '') + wellKnown)
+      : buildClient(jwksOpts, addHttps(iss.replace(/\/$/, '')) + wellKnown)
         .then(cacheClient(iss))
         .then(fn => fn(kid))
 
