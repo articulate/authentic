@@ -7,12 +7,12 @@ const bad                = require('./fixtures/bad-iss')
 const keys               = require('./fixtures/keys')
 const oidc               = require('./fixtures/oidc')
 const token              = require('./fixtures/token')
+const httpsMissingToken  = require('./fixtures/token-iss-no-https.js')
 const capitalBearerToken = 'Bearer ' + token
 const lowerBearerToken   = 'bearer ' + token
 const malformedBearerToken = 'Bearer' + token.slice(0, 200)
 
 const { issuer } = oidc
-
 
 const badIss = jwt.decode(bad, { complete: true }).payload.iss
 
@@ -95,6 +95,24 @@ describe('authentic', () => {
         beforeEach(() =>
           authentic(token).then(res)
         )
+
+        it('validates the jwt against the jwks', () =>
+          expect(res().sub).to.equal('00udjyjssbt2S1QVr0h7')
+        )
+
+        it('caches the jwks client', () =>
+          expect(res().sub).to.equal('00udjyjssbt2S1QVr0h7')
+        )
+      })
+
+      describe('with a valid jwt that is missing protocol in iss claim', () => {
+        beforeEach(() => {
+          const auth = require('..')({
+            verify: { ignoreExpiration: true },
+            issWhitelist: [ issuer.replace('https://', '') ],
+          })
+          auth(httpsMissingToken).then(res)
+        })
 
         it('validates the jwt against the jwks', () =>
           expect(res().sub).to.equal('00udjyjssbt2S1QVr0h7')
