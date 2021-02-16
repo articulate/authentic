@@ -50,7 +50,7 @@ describe('authentic', () => {
 
         it('throws with TokenExpiredError', () => {
           expect(res().name).to.equal('TokenExpiredError')
-          expect(res().message).to.equal('jwt expired')
+          expect(res().message).to.equal('JWT expired')
         })
       })
     })
@@ -73,7 +73,7 @@ describe('authentic', () => {
 
         it('throws with TokenExpiredError', () => {
           expect(res().name).to.equal('TokenExpiredError')
-          expect(res().message).to.equal('jwt expired')
+          expect(res().message).to.equal('JWT expired')
         })
       })
     })
@@ -97,7 +97,7 @@ describe('authentic', () => {
 
       it('throws with TokenExpiredError', () => {
         expect(res().name).to.equal('TokenExpiredError')
-        expect(res().message).to.equal('jwt expired')
+        expect(res().message).to.equal('JWT expired')
       })
     })
 
@@ -182,7 +182,7 @@ describe('authentic', () => {
 
         it('throws with TokenExpiredError', () => {
           expect(res().name).to.equal('TokenExpiredError')
-          expect(res().message).to.equal('jwt expired')
+          expect(res().message).to.equal('JWT expired')
         })
       })
 
