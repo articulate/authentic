@@ -1,5 +1,4 @@
 declare module '@articulate/authentic' {
-  function Authentic(opts: Authentic.AuthenticOpts): Authentic.Validator
 
   namespace Authentic {
     interface JWT {
@@ -44,6 +43,8 @@ declare module '@articulate/authentic' {
       (token: string): Promise<Authentic.JWT>
     }
   }
+
+  function Authentic(opts: Authentic.AuthenticOpts): Authentic.Validator
 
   export = Authentic
 }
