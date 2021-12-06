@@ -34,6 +34,7 @@ declare module '@articulate/authentic' {
     }
 
     interface AuthenticOpts {
+      claimsInError?: string[]
       issWhitelist: string[]
       jwks?: JWKSOpts
       verify?: VerifyOpts
