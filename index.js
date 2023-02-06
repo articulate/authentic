@@ -1,9 +1,10 @@
-const axios                 = require('axios')
 const Boom                  = require('boom')
 const jwks                  = require('jwks-rsa')
 const jwt                   = require('jsonwebtoken')
 const pick                  = require('lodash.pick')
 const { promisify }         = require('util')
+
+const { getRequest }        = require('./lib/http')
 const { IssWhitelistError } = require('./lib/errors')
 const { rename, tapP }      = require('./lib/helpers')
 
@@ -13,11 +14,10 @@ const addHttps = url =>
   /^http[s]?:\/\//.test(url) ? url : 'https://' + url
 
 const bindFunction = client =>
-  promisify(client.getSigningKey.bind(client))
+  client.getSigningKey.bind(client)
 
 const buildClient = (jwksOpts, url) =>
-  axios.get(url)
-    .then(res => res.data)
+  getRequest(url)
     .then(rename('jwks_uri', 'jwksUri'))
     .then(obj => jwks(Object.assign({}, jwksOpts, obj)))
     .then(bindFunction)
