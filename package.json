@@ -35,7 +35,7 @@
     "coveralls": "^3.0.0",
     "eslint": "5.14.x",
     "mocha": "6.0.x",
-    "nock": "10.x.x",
+    "nock": "11",
     "nyc": "13.x.x",
     "prop-factory": "^1.0.0"
   }
