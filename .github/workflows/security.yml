@@ -1,0 +1,13 @@
+name: Security
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    types: [ opened, ready_for_review, synchronize ]
+    branches: [ master, main ]
+
+jobs:
+  security-scans:
+    uses: articulate/infosec/.github/workflows/security.yml@v1
+    secrets: inherit
