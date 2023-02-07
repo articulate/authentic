@@ -14,6 +14,9 @@
     "functions": 100,
     "branches": 100
   },
+  "engines": {
+    "node": ">=14"
+  },
   "scripts": {
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "lint": "eslint .",
