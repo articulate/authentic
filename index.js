@@ -22,9 +22,6 @@ const buildClient = (jwksOpts, url) =>
     .then(obj => jwks(Object.assign({}, jwksOpts, obj)))
     .then(bindFunction)
 
-const chooseKey = key =>
-  key.publicKey || key.rsaPublicKey
-
 const decode = token =>
   jwt.decode(token, { complete: true })
 
@@ -90,7 +87,7 @@ const factory = options => {
 
   const verify = token => decoded =>
     getSigningKey(decoded)
-      .then(chooseKey)
+      .then(key => key.publicKey)
       .then(jwtVerify(token))
       .catch(throwWithData(decoded))
 
