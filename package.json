@@ -19,7 +19,7 @@
     "lint": "eslint .",
     "postversion": "git push --tags origin master",
     "preversion": "git checkout master",
-    "test": "mocha --reporter=dot",
+    "test": "mocha",
     "test:ci": "yarn lint && yarn test:coverage && yarn coverage",
     "test:coverage": "nyc mocha --reporter=dot"
   },
