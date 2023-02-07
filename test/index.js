@@ -8,6 +8,7 @@ const keys               = require('./fixtures/keys')
 const oidc               = require('./fixtures/oidc')
 const token              = require('./fixtures/token')
 const httpsMissingToken  = require('./fixtures/token-iss-no-https.js')
+const httpOnlyIssToken   = require('./fixtures/token-iss-http-only')
 const capitalBearerToken = 'Bearer ' + token
 const lowerBearerToken   = 'bearer ' + token
 const malformedBearerToken = 'Bearer' + token.slice(0, 200)
@@ -112,6 +113,28 @@ describe('authentic', () => {
             issWhitelist: [ issuer.replace('https://', '') ],
           })
           auth(httpsMissingToken).then(res)
+        })
+
+        it('validates the jwt against the jwks', () =>
+          expect(res().sub).to.equal('00udjyjssbt2S1QVr0h7')
+        )
+
+        it('caches the jwks client', () =>
+          expect(res().sub).to.equal('00udjyjssbt2S1QVr0h7')
+        )
+      })
+
+      describe('with a valid jwt that has http:// protocol in iss claim', () => {
+        beforeEach(() => {
+          const httpIssuer = issuer.replace('https://', 'http://')
+          nock(httpIssuer).get(wellKnown).once().reply(200, oidc)
+          nock(httpIssuer).get('/v1/keys').once().reply(200, keys)
+
+          const auth = require('..')({
+            verify: { ignoreExpiration: true },
+            issWhitelist: [ httpIssuer ],
+          })
+          auth(httpOnlyIssToken).then(res)
         })
 
         it('validates the jwt against the jwks', () =>
