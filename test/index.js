@@ -245,16 +245,20 @@ describe('authentic', () => {
     })
 
     describe('with a timeout error while fetching the configuration', () => {
-      beforeEach(() =>
-        nock(issuer).get(wellKnown).once().delay(301).reply(200, oidc)
-      )
+      beforeEach(() => {
+        nock(issuer).get(wellKnown).once().delay(500).reply(200, oidc)
+        nock(issuer).get('/v1/keys').once().reply(200, keys)
+      })
 
       afterEach(() =>
         nock.cleanAll()
       )
 
       const authentic = require('..')({
-        issWhitelist: [ issuer ]
+        issWhitelist: [ issuer ],
+        jwks: {
+          timeout: 100
+        }
       })
 
       it('booms with a 401', async() => {

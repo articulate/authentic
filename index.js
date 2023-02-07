@@ -17,7 +17,7 @@ const bindFunction = client =>
   client.getSigningKey.bind(client)
 
 const buildClient = (jwksOpts, url) =>
-  getRequest(url)
+  getRequest(url, jwksOpts.timeout)
     .then(rename('jwks_uri', 'jwksUri'))
     .then(obj => jwks(Object.assign({}, jwksOpts, obj)))
     .then(bindFunction)
