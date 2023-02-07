@@ -1,4 +1,4 @@
-const Boom                  = require('boom')
+const Boom                  = require('@hapi/boom')
 const jwks                  = require('jwks-rsa')
 const jwt                   = require('jsonwebtoken')
 const pick                  = require('lodash.pick')
