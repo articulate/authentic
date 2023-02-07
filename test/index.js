@@ -222,17 +222,17 @@ describe('authentic', () => {
       })
     })
   })
-  
+
   context('invalid well-known configuration', () => {
     describe('with a unexpected error while fetching the configurations', () => {
       beforeEach(() =>
         nock(issuer).get(wellKnown).once().replyWithError('unexpected error')
       )
-      
+
       afterEach(() =>
         nock.cleanAll()
       )
-      
+
       const authentic = require('..')({
         issWhitelist: [ issuer ]
       })
@@ -248,11 +248,11 @@ describe('authentic', () => {
       beforeEach(() =>
         nock(issuer).get(wellKnown).once().delay(301).reply(200, oidc)
       )
-      
+
       afterEach(() =>
         nock.cleanAll()
       )
-      
+
       const authentic = require('..')({
         issWhitelist: [ issuer ]
       })
@@ -268,11 +268,11 @@ describe('authentic', () => {
       beforeEach(() => {
         nock(issuer).get(wellKnown).once().reply(200, '{"malformed-json":')
       })
-      
+
       afterEach(() =>
         nock.cleanAll()
       )
-      
+
       const authentic = require('..')({
         issWhitelist: [ issuer ]
       })
@@ -283,13 +283,13 @@ describe('authentic', () => {
         expect(res().output.statusCode).to.equal(401)
       })
     })
-    
+
     describe('with well-known configuration 404 - not found', () => {
       beforeEach(() => {
         nock(issuer).get(wellKnown).once().reply(404)
         nock(issuer).get('/v1/keys').once().reply(200, keys)
       })
-      
+
       afterEach(() =>
         nock.cleanAll()
       )
@@ -298,105 +298,105 @@ describe('authentic', () => {
         const authentic = require('..')({
           issWhitelist: [ issuer ]
         })
-  
+
         describe('with an expired jwt', () => {
           beforeEach(() =>
             authentic(token).catch(res)
           )
-  
+
           it('booms with a 401', () => {
             expect(res().isBoom).to.be.true
             expect(res().output.statusCode).to.equal(401)
           })
         })
       })
-  
+
       describe('setup with invalid claimsInError value', () => {
         const authentic = require('..')({
           issWhitelist: [ issuer ],
           claimsInError: 'sub'
         })
-  
+
         describe('with an expired jwt', () => {
           beforeEach(() =>
             authentic(token).catch(res)
           )
-  
+
           it('booms with a 401', () => {
             expect(res().isBoom).to.be.true
             expect(res().output.statusCode).to.equal(401)
           })
         })
       })
-  
+
       describe('setup with claimsInError set to a list of claim(s)', () => {
         const authentic = require('..')({
           issWhitelist: [ issuer ],
           claimsInError: [ 'sub', 'iss' ]
         })
-  
+
         describe('with an expired jwt', () => {
           beforeEach(() =>
             authentic(token).catch(res)
           )
-  
+
           it('booms with a 401', () => {
             expect(res().isBoom).to.be.true
             expect(res().output.statusCode).to.equal(401)
           })
         })
       })
-  
+
       describe('setup with valid configuration options', () => {
         const authentic = require('..')({
           verify: { ignoreExpiration: true },
           issWhitelist: [ issuer ],
         })
-  
+
         describe('with a valid jwt', () => {
           beforeEach(() =>
             authentic(token).catch(res)
           )
-  
+
           it('booms 401', () => {
             expect(res().isBoom).to.be.true
             expect(res().output.statusCode).to.equal(401)
           })
         })
-  
+
         describe('with a valid jwt that starts with Bearer', () => {
           beforeEach(() =>
             authentic(capitalBearerToken).catch(res)
           )
-  
+
           it('booms 401', () => {
             expect(res().isBoom).to.be.true
             expect(res().output.statusCode).to.equal(401)
           })
         })
-  
+
         describe('with a valid jwt that starts with bearer', () => {
           beforeEach(() =>
             authentic(lowerBearerToken).catch(res)
           )
-  
+
           it('booms 401', () => {
             expect(res().isBoom).to.be.true
             expect(res().output.statusCode).to.equal(401)
           })
         })
-  
+
         describe('with an invalid jwt', () => {
           beforeEach(() =>
             authentic('invalid').catch(res)
           )
-  
+
           it('booms with a 401', () => {
             expect(res().isBoom).to.be.true
             expect(res().output.statusCode).to.equal(401)
           })
         })
-  
+
         describe('with an expired jwt', () => {
           beforeEach(() => {
             const auth = require('..')({
@@ -404,53 +404,53 @@ describe('authentic', () => {
             })
             auth(token).catch(res)
           })
-  
+
           it('booms with a 401', () => {
             expect(res().isBoom).to.be.true
             expect(res().output.statusCode).to.equal(401)
           })
         })
-  
+
         describe('with an invalid iss', () => {
           beforeEach(() =>
             authentic(bad).catch(res)
           )
-  
+
           it('booms with a 403', () => {
             expect(res().isBoom).to.be.true
             expect(res().output.statusCode).to.equal(403)
           })
-  
+
           it('includes the invalid iss in the error message', () =>
             expect(res().output.payload.message).to.contain(badIss)
           )
         })
-  
+
         describe('with a null token', () => {
           beforeEach(() =>
             authentic(null).catch(res)
           )
-  
+
           it('booms with a 401', () => {
             expect(res().isBoom).to.be.true
             expect(res().output.statusCode).to.equal(401)
           })
-  
+
           it('mentions that the token was null', () =>
             expect(res().output.payload.message).to.contain('null token')
           )
         })
-  
+
         describe('with a malformed token', () => {
           beforeEach(() =>
             authentic(malformedBearerToken).catch(res)
           )
-  
+
           it('booms with a 401', () => {
             expect(res().isBoom).to.be.true
             expect(res().output.statusCode).to.equal(401)
           })
-  
+
           it('mentions that the token is invalid', () =>
             expect(res().output.payload.message).to.contain('invalid token')
           )
