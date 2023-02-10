@@ -291,6 +291,26 @@ describe('authentic', () => {
       })
     })
 
+    describe('with an empty response while fetching the configuration', () => {
+      beforeEach(() => {
+        nock(issuer).get(wellKnown).once().reply(200, '')
+      })
+
+      afterEach(() =>
+        nock.cleanAll()
+      )
+
+      const authentic = require('..')({
+        issWhitelist: [ issuer ]
+      })
+
+      it('booms with a 401', async() => {
+        await authentic(token).catch(res)
+        expect(res().isBoom).to.be.true
+        expect(res().output.statusCode).to.equal(401)
+      })
+    })
+
     describe('with a malformed JSON in the configuration response', () => {
       beforeEach(() => {
         nock(issuer).get(wellKnown).once().reply(200, '{"malformed-json":')
