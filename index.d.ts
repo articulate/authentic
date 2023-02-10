@@ -31,6 +31,7 @@ declare module '@articulate/authentic' {
     interface JWKSOpts {
       cache?: boolean
       rateLimit?: boolean
+      timeout?: number
     }
 
     interface AuthenticOpts {

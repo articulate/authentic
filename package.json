@@ -14,28 +14,30 @@
     "functions": 100,
     "branches": 100
   },
+  "engines": {
+    "node": ">=14"
+  },
   "scripts": {
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "lint": "eslint .",
     "postversion": "git push --tags origin master",
     "preversion": "git checkout master",
-    "test": "mocha --reporter=dot",
+    "test": "mocha",
     "test:ci": "yarn lint && yarn test:coverage && yarn coverage",
-    "test:coverage": "nyc yarn test"
+    "test:coverage": "nyc mocha --reporter=dot"
   },
   "dependencies": {
-    "axios": "^0.20.0",
-    "boom": "7.3.x",
-    "jsonwebtoken": "^8.1.1",
-    "jwks-rsa": "^1.9.0",
+    "@hapi/boom": "^10.0.0",
+    "jsonwebtoken": "^9.0.0",
+    "jwks-rsa": "^3.0.1",
     "lodash.pick": "^4.4.0"
   },
   "devDependencies": {
     "chai": "^4.1.2",
     "coveralls": "^3.0.0",
-    "eslint": "5.14.x",
+    "eslint": "^8.33.0",
     "mocha": "6.0.x",
-    "nock": "10.x.x",
+    "nock": "11",
     "nyc": "13.x.x",
     "prop-factory": "^1.0.0"
   }

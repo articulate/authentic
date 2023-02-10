@@ -1,6 +1,6 @@
 module.exports = {
   'env': {
-    'es6': true,
+    'es2017': true,
     'mocha': true,
     'node': true
   },
@@ -9,9 +9,11 @@ module.exports = {
     'sourceType': 'module'
   },
   'rules': {
+    'eol-last': ['error', 'always'],
     'indent': ['error', 2, { 'SwitchCase': 1 }],
     'linebreak-style': ['error', 'unix'],
     'no-console': 'off',
+    'no-trailing-spaces': 'error',
     'quotes': ['error', 'single', { 'allowTemplateLiterals': true }],
     'semi': ['error', 'never']
   }
