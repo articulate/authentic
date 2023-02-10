@@ -247,7 +247,7 @@ describe('authentic', () => {
   })
 
   context('invalid well-known configuration', () => {
-    describe('with a unexpected error while fetching the configurations', () => {
+    describe('with an unexpected error while fetching the configurations', () => {
       beforeEach(() =>
         nock(issuer).get(wellKnown).once().replyWithError('unexpected error')
       )
