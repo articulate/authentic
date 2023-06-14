@@ -20,8 +20,8 @@
   "scripts": {
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "lint": "eslint .",
-    "postversion": "git push --tags origin master",
-    "preversion": "git checkout master",
+    "postversion": "git push --tags origin main",
+    "preversion": "git checkout main",
     "test": "mocha",
     "test:ci": "yarn lint && yarn test:coverage && yarn coverage",
     "test:coverage": "nyc mocha --reporter=dot"
