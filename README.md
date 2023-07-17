@@ -52,3 +52,21 @@ const handler = req =>
 * `verify` Object: options to forward to `jwt.verify` from [`jsonwebtoken`](https://github.com/auth0/node-jsonwebtoken#jwtverifytoken-secretorpublickey-options-callback)
 * `issWhitelist` Array: list of trusted OIDC issuers
 * `claimsInError` Array: list of jwt payload claims to receive as the `data` propery of the error when verification fails.  When a list is not provided a `data` property will not be added to the error.
+
+## Contributing
+
+Changes are tracked & published using [changesets](https://github.com/changesets/changesets).
+
+### Adding a Changeset
+
+1. Create a git branch. Make your desired changes.
+1. Run `yarn changesets`. Follow the prompts & specify if your change is a
+    major, minor, or patch change.
+1. Add all the changes to `.changesets` & commit.
+1. Create a Pull Request. Merge into the main branch when ready.
+
+### Publishing to NPM
+
+Changesets will create a "Release" pull request whenever unpublished changesets
+are merged into main. When ready to publish to NPM, merge this pull request,
+and changes will be automatically published.
