@@ -4,7 +4,7 @@ declare module '@articulate/authentic' {
     interface JWT {
       // Standard JWT claims
       aud: string
-      cid?: number
+      cid?: number | string
       exp: number
       iat: number
       iss: string
