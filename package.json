@@ -18,6 +18,7 @@
     "node": ">=14"
   },
   "scripts": {
+    "build": "tsc",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "lint": "eslint .",
     "postversion": "git push --tags origin main",
@@ -28,18 +29,13 @@
   },
   "dependencies": {
     "@hapi/boom": "^10.0.0",
-    "jsonwebtoken": "^9.0.0",
-    "jwks-rsa": "^3.0.1",
-    "lodash.pick": "^4.4.0"
+    "jose": "^4.14.4"
   },
   "devDependencies": {
     "@changesets/cli": "^2.26.2",
-    "chai": "^4.1.2",
-    "coveralls": "^3.0.0",
-    "eslint": "^8.33.0",
-    "mocha": "6.0.x",
-    "nock": "11",
-    "nyc": "13.x.x",
-    "prop-factory": "^1.0.0"
+    "@typescript-eslint/eslint-plugin": "^6.4.0",
+    "@typescript-eslint/parser": "^6.4.0",
+    "eslint": "^8.47.0",
+    "typescript": "^5.1.6"
   }
 }
