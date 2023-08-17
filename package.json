@@ -2,8 +2,11 @@
   "name": "@articulate/authentic",
   "version": "2.0.5",
   "description": "Proper validation of JWT's against JWK's",
-  "main": "index.js",
-  "types": "index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/types.d.ts",
+  "files": [
+    "dist/*"
+  ],
   "repository": "git@github.com:articulate/authentic.git",
   "author": "articulate",
   "license": "MIT",
