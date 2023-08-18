@@ -1,13 +1,14 @@
 {
   "compilerOptions": {
     "target": "ES2019",
-    "types": ["node"],
+    "types": ["node", "jest"],
     "module": "CommonJS",
     "moduleResolution": "Node",
     "declaration": true,
     "outDir": "./dist",
     "esModuleInterop": false,
     "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
     "strict": true
   },
   "include": [
