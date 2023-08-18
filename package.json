@@ -2,33 +2,32 @@
   "name": "@articulate/authentic",
   "version": "2.0.5",
   "description": "Proper validation of JWT's against JWK's",
-  "main": "dist/index.js",
-  "types": "dist/types.d.ts",
-  "files": [
-    "dist/*"
-  ],
   "repository": "git@github.com:articulate/authentic.git",
-  "author": "articulate",
   "license": "MIT",
-  "nyc": {
-    "check-coverage": true,
-    "lines": 100,
-    "statements": 100,
-    "functions": 100,
-    "branches": 100
+  "author": "articulate",
+  "exports": {
+    ".": {
+      "import": "./dist/authentic.mjs",
+      "require": "./dist/authentic.js",
+      "types": "./dist/authentic.d.ts"
+    }
   },
-  "engines": {
-    "node": ">=14"
-  },
+  "main": "dist/authentic.js",
+  "module": "dist/authentic.mjs",
+  "typings": "dist/authentic.d.ts",
+  "files": [
+    "dist/**/*",
+    "src/**/*"
+  ],
   "scripts": {
-    "build": "tsc",
+    "build": "rollup --config rollup.config.ts --configPlugin typescript",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "lint": "eslint .",
-    "postversion": "git push --tags origin main",
-    "preversion": "git checkout main",
     "test": "mocha",
     "test:ci": "yarn lint && yarn test:coverage && yarn coverage",
-    "test:coverage": "nyc mocha --reporter=dot"
+    "test:coverage": "nyc mocha --reporter=dot",
+    "preversion": "git checkout main",
+    "postversion": "git push --tags origin main"
   },
   "dependencies": {
     "@hapi/boom": "^10.0.0",
@@ -36,9 +35,18 @@
   },
   "devDependencies": {
     "@changesets/cli": "^2.26.2",
+    "@rollup/plugin-typescript": "^11.1.2",
     "@typescript-eslint/eslint-plugin": "^6.4.0",
     "@typescript-eslint/parser": "^6.4.0",
+    "esbuild": "^0.19.2",
     "eslint": "^8.47.0",
+    "rollup": "^3.28.0",
+    "rollup-plugin-dts": "^6.0.0",
+    "rollup-plugin-esbuild": "^5.0.0",
+    "tslib": "^2.6.1",
     "typescript": "^5.1.6"
+  },
+  "engines": {
+    "node": ">=14"
   }
 }

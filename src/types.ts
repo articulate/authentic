@@ -27,5 +27,3 @@ export interface Validator {
 }
 
 export type Authentic = (opts: AuthenticOpts) => Validator
-
-export default Authentic
