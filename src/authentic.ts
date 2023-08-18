@@ -53,9 +53,9 @@ const authentic: Authentic = ({
 
     const strippedToken = stripBearer(token)
     const decoded = decodeOnlyJwt(strippedToken)
-    const iss = checkIss(decoded)
 
     try {
+      const iss = checkIss(decoded)
       const JWK = await getJwkKey(iss)
       const { payload } = await jwtVerify(strippedToken, JWK, {
         requiredClaims: ['aud', 'exp', 'iat', 'iss', 'sub'],
