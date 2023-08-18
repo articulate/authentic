@@ -26,8 +26,7 @@
     "test:watch": "jest --watchAll",
     "test:ci": "npm run lint && npm run test:coverage",
     "test:coverage": "jest --collectCoverage",
-    "preversion": "git checkout main",
-    "postversion": "git push --tags origin main"
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "@hapi/boom": "^10.0.0",
