@@ -1,5 +1,7 @@
-import { decodeJwt } from 'jose'
+import * as jose from 'jose'
 import * as nock from 'nock'
+
+const spyCreateRemoteJWKSet = jest.spyOn(jose, 'createRemoteJWKSet')
 
 import authentic from '../src/index'
 import * as keys from './fixtures/keys.json'
@@ -8,10 +10,11 @@ import * as oidc from './fixtures/oidc.json'
 const bad = 'eyJraWQiOiJEYVgxMWdBcldRZWJOSE83RU1QTUw1VnRUNEV3cmZrd2M1U2xHaVd2VXdBIiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiIwMHVkanlqc3NidDJTMVFWcjBoNyIsInZlciI6MSwiaXNzIjoiaHR0cHM6Ly9iYWQtaXNzLmNvbSIsImF1ZCI6IjBvYWRqeWs1MjNobFpmeWIxMGg3IiwiaWF0IjoxNTE2NjM3MDkxLCJleHAiOjE1MTY2NDA2OTEsImp0aSI6IklELmM4amh6b2t5MGZGTlByOExfU0NycnBnVFRVeUFvY3RIdjY5T0tTbWY1R0EiLCJhbXIiOlsicHdkIl0sImlkcCI6IjAwb2NnNHRidTZGSzJEaDVHMGg3Iiwibm9uY2UiOiIyIiwiYXV0aF90aW1lIjoxNTE2NjM3MDkxLCJ0ZW5hbnRJZCI6ImQ0MmUzM2ZkLWYwNWUtNGE0ZS05MDUwLTViN2IyZTgwMDgzNCJ9.Senilj3Z8Z99b-UVnnxwWKjYIn4jNrE-BmZAuR7Qb3nkxS7N-r7WnAQ-4vuqtD5Fyy-1zOFUxoO6jyMvhWbhNlPmYaBQk7InKZU6ABayrijfv7OJSQKzs0Q7EQbgtW4T27Gqp6G4Rp9l7O472lgwapTV_L2IUqYNP7aC3FAFcqmpP_KFyeKj-zcwil6aszPgxzMA3Rp33BqQfuhIJKSYqWQT6pkDXkjM3pLxaHRfrRahQ2F0M190iCvBJMc4b82TVoQQu5uJbb1mD97wwlSvMFYCHN_51g9IY5BabZcOv4h0T3-XqFxPNbS8PZVfBikumkhqD5b4zjA-3ddgPw2GkA'
 const httpsMissingToken = 'eyJraWQiOiIzZEs0LUM1cmVWRktKUGVUU2FBUE5zLXA0MWtiV1VET0JYRjNYUUhYamFrIiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiIwMHVkanlqc3NidDJTMVFWcjBoNyIsInZlciI6MSwiaXNzIjoiYXV0aGVudGljLmFydGljdWxhdGUuY29tLyIsImF1ZCI6IjBvYWRqeWs1MjNobFpmeWIxMGg3IiwiaWF0IjoxNTE2NjM3MDkxLCJleHAiOjE1MTY2NDA2OTEsImp0aSI6IklELmM4amh6b2t5MGZGTlByOExfU0NycnBnVFRVeUFvY3RIdjY5T0tTbWY1R0EiLCJhbXIiOlsicHdkIl0sImlkcCI6IjAwb2NnNHRidTZGSzJEaDVHMGg3Iiwibm9uY2UiOiIyIiwiYXV0aF90aW1lIjoxNTE2NjM3MDkxLCJ0ZW5hbnRJZCI6ImQ0MmUzM2ZkLWYwNWUtNGE0ZS05MDUwLTViN2IyZTgwMDgzNCJ9.inuggb9ZZSdwLYMr0t5uTGP_wV3Y-ZC11xpwgU4ltU6YyE3jwZKr_XNXVs7qjzZoCmuE_Ubk2mnub491BUtye2L8RnU3kN1_HW9sEotu7X8WDt-avQ1-NlQY_G4W2pEmD-RYLM0lNCEXnwQUGyLqhhZkZ-vCOkJUGDYCttgNk25TPTcGI_Ro26BdrPW31BAUgj1KzVVs8c5316uacEV-2yS9jDIcjm0_3RoxeINwibfNwthNiYn18tMdy_wPJA4BTaDVep2wdrYoJMnFTl0h2ayIxBrFkzZPYSImCbHEuBgIkV4xHf_Ipulgyvf1CGrv7_EGiXuXOu-jPSm4WZvoVg'
 const httpOnlyIssToken = 'eyJrdHkiOiJSU0EiLCJlIjoiQVFBQiIsInVzZSI6InNpZyIsImtpZCI6IngzNFpkQW1LTEprNHpoZ1pEZ2tmc2dpekl4UjZiVE1IN05NVUh4NGk0a0EiLCJhbGciOiJSUzI1NiIsIm4iOiJySUd4bmtjVTVRS29SZkh0U0RhS1F1b3JjMmdobXR4M0dYSVE5TTltaGxGeDV4bDJiU2NnRXRnQXBFeERaVVNLMGxjUmhZVHRQQmFYc0ZCSl9LNTZRVkgyVDdiRmpyOTJHMUdZMjVKc2QyMjVzNjVZUVhEY0NEbGJyeGNyTHV5akJrRll3M0Ywa0pHVlRuaEdnVGJmZlNaQzc1VTd3U056Y1lETDFxZnlla0JFaENBYTA1RmNuVFE2eHlHTGpNMGYybl9xZXprdU8tY1ZZV3hYMkppRzVQdjNLb3p3cjhzV2g3UTNvdUhTMFhQYU11eWZ5Q0o4WlU5WVZrcThDQVE1bFUzN29QdHU3UU53SnljdTd5N21HdUItZlBCNGU0S2tnQk5QeXRfVE1XamVJc2IwQy0zN0ZpcDQ1aUU0NFFnTFRGejQtNmlGbmF4bjF0SXN1cXdiWncifQ.eyJpc3MiOiJodHRwOi8vYXV0aGVudGljLmFydGljdWxhdGUuY29tLyIsImlhdCI6MTUxNjYzNzA5MSwiZXhwIjoxNTE2NjQwNjkxLCJhdWQiOiIwb2FkanlrNTIzaGxaZnliMTBoNyIsInN1YiI6IjAwdWRqeWpzc2J0MlMxUVZyMGg3IiwianRpIjoiSUQuYzhqaHpva3kwZkZOUHI4TF9TQ3JycGdUVFV5QW9jdEh2NjlPS1NtZjVHQSIsImFtciI6InB3ZCIsImlkcCI6IjAwb2NnNHRidTZGSzJEaDVHMGg3Iiwibm9uY2UiOiIyIiwiYXV0aF90aW1lIjoiMTUxNjYzNzA5MSIsInRlbmFudElkIjoiZDQyZTMzZmQtZjA1ZS00YTRlLTkwNTAtNWI3YjJlODAwODM0In0.j0KjrH1-TTcF2lV5RfCuM_DhCmPmHn0X2_SRBEht2mQs7_-0L0vg6ydXrwRGCIn6xMIzWzSShdUUlYYEUV5-ktfvcQREAqY-h7KUNRY_hylYc2O58xQfd7DwfaQFsBsobmJHuLZHarxcKrvIue7v57kmbWvd6s6JrjMKWyt1eTQA6S6C2tfsWEvp21KXug6xm_B5UWNbmmD-iLPcl0p-8Hv2axmA-_za3u_mwiHs-gzw3FLEPsWRfc4Lkqyge6pxIR0uVEoo0fqfJVTYink4qvln8DqYpo0oH5ga6nKzzQnpsPMp6AgKEE0ra7BY6hAZhVkntfrcCKNeBEXqQ6wqGw'
+const missingIssClaimToken = 'eyJraWQiOiJEYVgxMWdBcldRZWJOSE83RU1QTUw1VnRUNEV3cmZrd2M1U2xHaVd2VXdBIiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiIwMHVkanlqc3NidDJTMVFWcjBoNyIsInZlciI6MSwiYXVkIjoiMG9hZGp5azUyM2hsWmZ5YjEwaDciLCJpYXQiOjE1MTY2MzcwOTEsImV4cCI6MTUxNjY0MDY5MSwianRpIjoiSUQuYzhqaHpva3kwZkZOUHI4TF9TQ3JycGdUVFV5QW9jdEh2NjlPS1NtZjVHQSIsImFtciI6WyJwd2QiXSwiaWRwIjoiMDBvY2c0dGJ1NkZLMkRoNUcwaDciLCJub25jZSI6IjIiLCJhdXRoX3RpbWUiOjE1MTY2MzcwOTEsInRlbmFudElkIjoiZDQyZTMzZmQtZjA1ZS00YTRlLTkwNTAtNWI3YjJlODAwODM0In0.T5p2i5uX2ZqaeeTU4G7Sa99-tM3ePuhO83biGVwuAVD2-UfomK-VBueoqkq72TyzI1oSToqq1nhrHhHnNkKs4rV8MtxaFWyIbf8Nlu1dBK19IXOGwQ9gUto1rkLyYxSJPCPxL7yujJ8RdnGg-aCxyy2PZtfOeTYLaGl2tf44_NWgu_d-fFKjTN1e020PeBxpHx6fJqCKfbBDv0L09cUX-4nbvZPtvnQdjH0oeBzPJmJWK6pY05F609WWnr9-JigcnvE-FntxHRKTfL1BVbGHNMsp-0waKHIAWjVajaX8NMLE9Y0Ydroj4EHBMxvmJB_971Z_-pcJeweNrjL13pkmYw'
 const token = 'eyJraWQiOiJEYVgxMWdBcldRZWJOSE83RU1QTUw1VnRUNEV3cmZrd2M1U2xHaVd2VXdBIiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiIwMHVkanlqc3NidDJTMVFWcjBoNyIsInZlciI6MSwiaXNzIjoiaHR0cHM6Ly9hdXRoZW50aWMuYXJ0aWN1bGF0ZS5jb20vIiwiYXVkIjoiMG9hZGp5azUyM2hsWmZ5YjEwaDciLCJpYXQiOjE1MTY2MzcwOTEsImV4cCI6MTUxNjY0MDY5MSwianRpIjoiSUQuYzhqaHpva3kwZkZOUHI4TF9TQ3JycGdUVFV5QW9jdEh2NjlPS1NtZjVHQSIsImFtciI6WyJwd2QiXSwiaWRwIjoiMDBvY2c0dGJ1NkZLMkRoNUcwaDciLCJub25jZSI6IjIiLCJhdXRoX3RpbWUiOjE1MTY2MzcwOTEsInRlbmFudElkIjoiZDQyZTMzZmQtZjA1ZS00YTRlLTkwNTAtNWI3YjJlODAwODM0In0.NEVqz-jJIyaEgho3uQYOvWC52s_50AV--FHwBWm9BftucQ5G4bSHL7szeaPc3HT0VrhFUntRLlJHzw7pZvRJG2WExj6HJi-Ug3LDwQOj47Gf_ywlEydBAQz7u98JK2ZJcCP16-lIOM1J-fUz-SpFqI4RcO5MLiiEPnMqsXS-EkPd8Y27G64PnHnNjaY3sLrOc9peeD5Xh82TSjeMFFAPpiYNtTCixnfZeQCCtxOCPhiDYAwDSxaLbrOcDAYdO0ytKQ9dBfFoY0AzJNqgJUOPVeeC_AgEJeLIaSKVJAFqZAB8t5VagvVGIqcu7TaMCOmOZx_5A8Xc9JVmRoKDAMlizQ'
 
-const badIss = decodeJwt(bad).iss
-const decodedToken = decodeJwt(token)
+const badIss = jose.decodeJwt(bad).iss
+const decodedToken = jose.decodeJwt(token)
 
 const capitalBearerToken = 'Bearer ' + token
 const lowerBearerToken = 'bearer ' + token
@@ -246,6 +249,22 @@ describe('authentic', () => {
         )
       })
 
+      describe('with a token missing the ISS claim', () => {
+        it('booms with a 403', () =>
+          expect(authenticValidator(missingIssClaimToken)).rejects.toMatchObject({
+            isBoom: true,
+            name: 'IssWhitelistError',
+            output: {
+              statusCode: 403
+            },
+          })
+        )
+
+        it('mentions that the token is invalid', () =>
+          expect(authenticValidator(missingIssClaimToken)).rejects.toHaveProperty('message', 'invalid or missing iss claim')
+        )
+      })
+
       describe('with a malformed token', () => {
         it('booms with a 401', () =>
           expect(authenticValidator(malformedBearerToken)).rejects.toMatchObject({
@@ -322,6 +341,23 @@ describe('authentic', () => {
       )
     })
 
+    describe('with a response without the jwk_uri prop while fetching the configuration', () => {
+      const authenticValidator = authentic({ issWhitelist: [ issuer ] })
+
+      beforeEach(() => {
+        wellKnownScope = nock(issuer).get(wellKnown).once().reply(200, '{}')
+      })
+
+      it('booms with a 401', () =>
+        expect(authenticValidator(token)).rejects.toMatchObject({
+          isBoom: true,
+          output: {
+            statusCode: 401
+          },
+        })
+      )
+    })
+
     describe('with a malformed JSON in the configuration response', () => {
       const authenticValidator = authentic({ issWhitelist: [ issuer ] })
 
@@ -345,6 +381,27 @@ describe('authentic', () => {
       beforeEach(() => {
         wellKnownScope = nock(issuer).get(wellKnown).once().reply(404)
         keysScope = nock(issuer).get('/v1/keys').once().reply(200, keys)
+      })
+
+      it('booms with a 401', () =>
+        expect(authenticValidator(token)).rejects.toMatchObject({
+          isBoom: true,
+          output: {
+            statusCode: 401
+          },
+        })
+      )
+    })
+
+    describe('with an error while creating the remote JW set', () => {
+      const authenticValidator  = authentic({ issWhitelist: [ issuer ] })
+
+      beforeEach(() => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        spyCreateRemoteJWKSet.mockImplementation(() => null)
+
+        wellKnownScope = nock(issuer).get(wellKnown).once().reply(200, oidc)
       })
 
       it('booms with a 401', () =>

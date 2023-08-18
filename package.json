@@ -21,12 +21,11 @@
   ],
   "scripts": {
     "build": "rollup --config rollup.config.ts --configPlugin typescript",
-    "coverage": "nyc report --reporter=text-lcov | coveralls",
     "lint": "eslint .",
     "test": "jest",
     "test:watch": "jest --watchAll",
-    "test:ci": "yarn lint && yarn test:coverage && yarn coverage",
-    "test:coverage": "nyc mocha --reporter=dot",
+    "test:ci": "npm run lint && npm run test:coverage",
+    "test:coverage": "jest --collectCoverage",
     "preversion": "git checkout main",
     "postversion": "git push --tags origin main"
   },
