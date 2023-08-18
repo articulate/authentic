@@ -27,7 +27,7 @@ const fetchOidcMetadata = async (issuerUri: string, timeout?: number) => {
   } catch (error) {
     if (isBoom(error)) throw error
 
-    throw unauthorized('')
+    throw unauthorized((error as Error)?.message || `There was an error while fetching the OIDC metadata for ${issuerUri}`)
   }
 }
 
