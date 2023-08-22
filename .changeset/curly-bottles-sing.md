@@ -9,3 +9,7 @@ The biggest change on this version is the replacement of [jsonwebtoken](https://
 Also on this new version, JWTs without the following claims will be rejected with a `Boom.unauthorized` error: `['aud', 'exp', 'iat', 'iss', 'sub']`.
 
 Before upgrading make sure your app uses the new expected `jwks` and `verify` options (which differ from the old ones).
+
+### Dual Export of ESM and CJS Bundles
+
+Starting with this new version, Authentic started exporting both an ECMAScript Module (ESM) bundle and a CommonJS (CJS) bundle. This means that applications utilizing either of these architectures can now choose the bundle that best suits their specific use case.
