@@ -10,6 +10,7 @@ import * as oidc from './fixtures/oidc.json'
 const bad = 'eyJraWQiOiJEYVgxMWdBcldRZWJOSE83RU1QTUw1VnRUNEV3cmZrd2M1U2xHaVd2VXdBIiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiIwMHVkanlqc3NidDJTMVFWcjBoNyIsInZlciI6MSwiaXNzIjoiaHR0cHM6Ly9iYWQtaXNzLmNvbSIsImF1ZCI6IjBvYWRqeWs1MjNobFpmeWIxMGg3IiwiaWF0IjoxNTE2NjM3MDkxLCJleHAiOjE1MTY2NDA2OTEsImp0aSI6IklELmM4amh6b2t5MGZGTlByOExfU0NycnBnVFRVeUFvY3RIdjY5T0tTbWY1R0EiLCJhbXIiOlsicHdkIl0sImlkcCI6IjAwb2NnNHRidTZGSzJEaDVHMGg3Iiwibm9uY2UiOiIyIiwiYXV0aF90aW1lIjoxNTE2NjM3MDkxLCJ0ZW5hbnRJZCI6ImQ0MmUzM2ZkLWYwNWUtNGE0ZS05MDUwLTViN2IyZTgwMDgzNCJ9.Senilj3Z8Z99b-UVnnxwWKjYIn4jNrE-BmZAuR7Qb3nkxS7N-r7WnAQ-4vuqtD5Fyy-1zOFUxoO6jyMvhWbhNlPmYaBQk7InKZU6ABayrijfv7OJSQKzs0Q7EQbgtW4T27Gqp6G4Rp9l7O472lgwapTV_L2IUqYNP7aC3FAFcqmpP_KFyeKj-zcwil6aszPgxzMA3Rp33BqQfuhIJKSYqWQT6pkDXkjM3pLxaHRfrRahQ2F0M190iCvBJMc4b82TVoQQu5uJbb1mD97wwlSvMFYCHN_51g9IY5BabZcOv4h0T3-XqFxPNbS8PZVfBikumkhqD5b4zjA-3ddgPw2GkA'
 const httpsMissingToken = 'eyJraWQiOiIzZEs0LUM1cmVWRktKUGVUU2FBUE5zLXA0MWtiV1VET0JYRjNYUUhYamFrIiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiIwMHVkanlqc3NidDJTMVFWcjBoNyIsInZlciI6MSwiaXNzIjoiYXV0aGVudGljLmFydGljdWxhdGUuY29tLyIsImF1ZCI6IjBvYWRqeWs1MjNobFpmeWIxMGg3IiwiaWF0IjoxNTE2NjM3MDkxLCJleHAiOjE1MTY2NDA2OTEsImp0aSI6IklELmM4amh6b2t5MGZGTlByOExfU0NycnBnVFRVeUFvY3RIdjY5T0tTbWY1R0EiLCJhbXIiOlsicHdkIl0sImlkcCI6IjAwb2NnNHRidTZGSzJEaDVHMGg3Iiwibm9uY2UiOiIyIiwiYXV0aF90aW1lIjoxNTE2NjM3MDkxLCJ0ZW5hbnRJZCI6ImQ0MmUzM2ZkLWYwNWUtNGE0ZS05MDUwLTViN2IyZTgwMDgzNCJ9.inuggb9ZZSdwLYMr0t5uTGP_wV3Y-ZC11xpwgU4ltU6YyE3jwZKr_XNXVs7qjzZoCmuE_Ubk2mnub491BUtye2L8RnU3kN1_HW9sEotu7X8WDt-avQ1-NlQY_G4W2pEmD-RYLM0lNCEXnwQUGyLqhhZkZ-vCOkJUGDYCttgNk25TPTcGI_Ro26BdrPW31BAUgj1KzVVs8c5316uacEV-2yS9jDIcjm0_3RoxeINwibfNwthNiYn18tMdy_wPJA4BTaDVep2wdrYoJMnFTl0h2ayIxBrFkzZPYSImCbHEuBgIkV4xHf_Ipulgyvf1CGrv7_EGiXuXOu-jPSm4WZvoVg'
 const httpOnlyIssToken = 'eyJrdHkiOiJSU0EiLCJlIjoiQVFBQiIsInVzZSI6InNpZyIsImtpZCI6IngzNFpkQW1LTEprNHpoZ1pEZ2tmc2dpekl4UjZiVE1IN05NVUh4NGk0a0EiLCJhbGciOiJSUzI1NiIsIm4iOiJySUd4bmtjVTVRS29SZkh0U0RhS1F1b3JjMmdobXR4M0dYSVE5TTltaGxGeDV4bDJiU2NnRXRnQXBFeERaVVNLMGxjUmhZVHRQQmFYc0ZCSl9LNTZRVkgyVDdiRmpyOTJHMUdZMjVKc2QyMjVzNjVZUVhEY0NEbGJyeGNyTHV5akJrRll3M0Ywa0pHVlRuaEdnVGJmZlNaQzc1VTd3U056Y1lETDFxZnlla0JFaENBYTA1RmNuVFE2eHlHTGpNMGYybl9xZXprdU8tY1ZZV3hYMkppRzVQdjNLb3p3cjhzV2g3UTNvdUhTMFhQYU11eWZ5Q0o4WlU5WVZrcThDQVE1bFUzN29QdHU3UU53SnljdTd5N21HdUItZlBCNGU0S2tnQk5QeXRfVE1XamVJc2IwQy0zN0ZpcDQ1aUU0NFFnTFRGejQtNmlGbmF4bjF0SXN1cXdiWncifQ.eyJpc3MiOiJodHRwOi8vYXV0aGVudGljLmFydGljdWxhdGUuY29tLyIsImlhdCI6MTUxNjYzNzA5MSwiZXhwIjoxNTE2NjQwNjkxLCJhdWQiOiIwb2FkanlrNTIzaGxaZnliMTBoNyIsInN1YiI6IjAwdWRqeWpzc2J0MlMxUVZyMGg3IiwianRpIjoiSUQuYzhqaHpva3kwZkZOUHI4TF9TQ3JycGdUVFV5QW9jdEh2NjlPS1NtZjVHQSIsImFtciI6InB3ZCIsImlkcCI6IjAwb2NnNHRidTZGSzJEaDVHMGg3Iiwibm9uY2UiOiIyIiwiYXV0aF90aW1lIjoiMTUxNjYzNzA5MSIsInRlbmFudElkIjoiZDQyZTMzZmQtZjA1ZS00YTRlLTkwNTAtNWI3YjJlODAwODM0In0.j0KjrH1-TTcF2lV5RfCuM_DhCmPmHn0X2_SRBEht2mQs7_-0L0vg6ydXrwRGCIn6xMIzWzSShdUUlYYEUV5-ktfvcQREAqY-h7KUNRY_hylYc2O58xQfd7DwfaQFsBsobmJHuLZHarxcKrvIue7v57kmbWvd6s6JrjMKWyt1eTQA6S6C2tfsWEvp21KXug6xm_B5UWNbmmD-iLPcl0p-8Hv2axmA-_za3u_mwiHs-gzw3FLEPsWRfc4Lkqyge6pxIR0uVEoo0fqfJVTYink4qvln8DqYpo0oH5ga6nKzzQnpsPMp6AgKEE0ra7BY6hAZhVkntfrcCKNeBEXqQ6wqGw'
+const http3000IssToken = 'eyJrdHkiOiJSU0EiLCJuIjoieU9ScmV2VWxYdl9vdzVGWlcxSG02MHN6Rm5fWm9XQWRtdzJVLXF4SUZUeHUyMURZZFZsOENfajgwYWMtZHBDVTdOblNtek9UTFRSRG5WVGlSaVYtNzBiNG9hR3FuOW9McmlVWkJTWWktMWJIU0tTRnBzQVpLZlBLYTJHN01RWXM4X3NtZ1Y1Q2pyMTNfMHBiX3ZjVGJvbUVOOGVOcjB2LURVZHF3eThnNTB3TlZ6WENJOGFRVnFFdlNMQml0MXkyY3QwZVBGNm8wQjdOMHhZRUpYako3anBFS1M5SkxlRy02UDFRT1NwNzJKbFptNjI2U3ZRcl9DM2xieEZBRlJWX0d0UU5RTnMzdDI1LS1tZzFBNkdFc0d1Y25la2xNeHJ1dWJwZS13WDI0T0hoaWczRlRCWmdXak8xTzByVlRrRGIxRlcwal9WaU5iSmdRRDJRQXY5a1d3IiwiZSI6IkFRQUIiLCJraWQiOiIzWWNxRkZVbmxVVXB4VnZWeklQWGZwNkJZWUtUckpHdmNmTjVTTklJNDRzIiwiYWxnIjoiUlMyNTYifQ.eyJpc3MiOiJodHRwOi8vYXV0aGVudGljLmFydGljdWxhdGUuY29tOjMwMDAvIiwiaWF0IjoxNTE2NjM3MDkxLCJleHAiOjE1MTY2NDA2OTEsImF1ZCI6IjBvYWRqeWs1MjNobFpmeWIxMGg3Iiwic3ViIjoiMDB1ZGp5anNzYnQyUzFRVnIwaDciLCJqdGkiOiJJRC5jOGpoem9reTBmRk5QcjhMX1NDcnJwZ1RUVXlBb2N0SHY2OU9LU21mNUdBIiwiYW1yIjoicHdkIiwiaWRwIjoiMDBvY2c0dGJ1NkZLMkRoNUcwaDciLCJub25jZSI6IjIiLCJhdXRoX3RpbWUiOiIxNTE2NjM3MDkxIiwidGVuYW50SWQiOiJkNDJlMzNmZC1mMDVlLTRhNGUtOTA1MC01YjdiMmU4MDA4MzQifQ.gtrExOY9HqM8-Q-2H-zTocH0_GKISRm745K1zrKpJ4n3ijUhOo8xNRpY5f0NPrd-mKde_0F6Em0YUXMHdKAl2uCs99mibph7ddAbB6wTrI_OrfKVViRgoxAAbsXAjdCL-RCs0nys3QItqJ9WY4VtsEcG_Q0kwAsE9ZHitrpmn9tsy2vlj6RHW1VryelLW5JtzDUMnVorhGdZR1tDA8JbWBX2iWyXNoQkkl1zVoVpl9FhXBzGHlsxp_BxFRjteOxjpRDHWYpWXE-RQ3K6Ks1URYQopVsBdRA89grMPQ3JrKOUcSl0k_yfg7Q-ZrmtouucUwbnnXGWn5Aah_LHC3ewlQ'
 const missingIssClaimToken = 'eyJraWQiOiJEYVgxMWdBcldRZWJOSE83RU1QTUw1VnRUNEV3cmZrd2M1U2xHaVd2VXdBIiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiIwMHVkanlqc3NidDJTMVFWcjBoNyIsInZlciI6MSwiYXVkIjoiMG9hZGp5azUyM2hsWmZ5YjEwaDciLCJpYXQiOjE1MTY2MzcwOTEsImV4cCI6MTUxNjY0MDY5MSwianRpIjoiSUQuYzhqaHpva3kwZkZOUHI4TF9TQ3JycGdUVFV5QW9jdEh2NjlPS1NtZjVHQSIsImFtciI6WyJwd2QiXSwiaWRwIjoiMDBvY2c0dGJ1NkZLMkRoNUcwaDciLCJub25jZSI6IjIiLCJhdXRoX3RpbWUiOjE1MTY2MzcwOTEsInRlbmFudElkIjoiZDQyZTMzZmQtZjA1ZS00YTRlLTkwNTAtNWI3YjJlODAwODM0In0.T5p2i5uX2ZqaeeTU4G7Sa99-tM3ePuhO83biGVwuAVD2-UfomK-VBueoqkq72TyzI1oSToqq1nhrHhHnNkKs4rV8MtxaFWyIbf8Nlu1dBK19IXOGwQ9gUto1rkLyYxSJPCPxL7yujJ8RdnGg-aCxyy2PZtfOeTYLaGl2tf44_NWgu_d-fFKjTN1e020PeBxpHx6fJqCKfbBDv0L09cUX-4nbvZPtvnQdjH0oeBzPJmJWK6pY05F609WWnr9-JigcnvE-FntxHRKTfL1BVbGHNMsp-0waKHIAWjVajaX8NMLE9Y0Ydroj4EHBMxvmJB_971Z_-pcJeweNrjL13pkmYw'
 const token = 'eyJraWQiOiJEYVgxMWdBcldRZWJOSE83RU1QTUw1VnRUNEV3cmZrd2M1U2xHaVd2VXdBIiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiIwMHVkanlqc3NidDJTMVFWcjBoNyIsInZlciI6MSwiaXNzIjoiaHR0cHM6Ly9hdXRoZW50aWMuYXJ0aWN1bGF0ZS5jb20vIiwiYXVkIjoiMG9hZGp5azUyM2hsWmZ5YjEwaDciLCJpYXQiOjE1MTY2MzcwOTEsImV4cCI6MTUxNjY0MDY5MSwianRpIjoiSUQuYzhqaHpva3kwZkZOUHI4TF9TQ3JycGdUVFV5QW9jdEh2NjlPS1NtZjVHQSIsImFtciI6WyJwd2QiXSwiaWRwIjoiMDBvY2c0dGJ1NkZLMkRoNUcwaDciLCJub25jZSI6IjIiLCJhdXRoX3RpbWUiOjE1MTY2MzcwOTEsInRlbmFudElkIjoiZDQyZTMzZmQtZjA1ZS00YTRlLTkwNTAtNWI3YjJlODAwODM0In0.NEVqz-jJIyaEgho3uQYOvWC52s_50AV--FHwBWm9BftucQ5G4bSHL7szeaPc3HT0VrhFUntRLlJHzw7pZvRJG2WExj6HJi-Ug3LDwQOj47Gf_ywlEydBAQz7u98JK2ZJcCP16-lIOM1J-fUz-SpFqI4RcO5MLiiEPnMqsXS-EkPd8Y27G64PnHnNjaY3sLrOc9peeD5Xh82TSjeMFFAPpiYNtTCixnfZeQCCtxOCPhiDYAwDSxaLbrOcDAYdO0ytKQ9dBfFoY0AzJNqgJUOPVeeC_AgEJeLIaSKVJAFqZAB8t5VagvVGIqcu7TaMCOmOZx_5A8Xc9JVmRoKDAMlizQ'
 
@@ -174,6 +175,44 @@ describe('authentic', () => {
           expect(wellKnownScope.isDone()).toBeFalsy()
         })
       })
+
+      describe('with a valid jwt that has a custom port in the iss claim URL', () => {
+        const http3000IssuerUrl = new URL(issuer)
+        http3000IssuerUrl.protocol = 'http://'
+        http3000IssuerUrl.port = '3000'
+
+        const authenticValidator = authentic({
+          issWhitelist: [http3000IssuerUrl.toString()],
+          verify: {
+            currentDate: new Date('2018-01-22T16:04:51.000Z')
+          },
+        })
+
+        beforeEach(() => {
+          const jwks_uri = new URL(oidc.jwks_uri)
+          jwks_uri.protocol = 'http://'
+          jwks_uri.port = '3000'
+
+          keysScope = nock(http3000IssuerUrl.toString()).get('/v1/keys').once().reply(200, keys)
+          wellKnownScope = nock(http3000IssuerUrl.toString()).get(wellKnown).once().reply(200, {
+            ...oidc,
+            jwks_uri: jwks_uri.toString()
+          })
+        })
+
+        it('validates the jwt against the jwks', async() => {
+          await expect(authenticValidator(http3000IssToken)).resolves.toHaveProperty('sub', '00udjyjssbt2S1QVr0h7')
+          expect(keysScope.isDone()).toBeTruthy()
+          expect(wellKnownScope.isDone()).toBeTruthy()
+        })
+
+        it('caches the jwks client', async() => {
+          await expect(authenticValidator(http3000IssToken)).resolves.toHaveProperty('sub', '00udjyjssbt2S1QVr0h7')
+          expect(keysScope.isDone()).toBeFalsy()
+          expect(wellKnownScope.isDone()).toBeFalsy()
+        })
+      })
+
 
       describe('with a valid jwt that starts with Bearer', () => {
         it('validates the jwt against the jwks', () =>

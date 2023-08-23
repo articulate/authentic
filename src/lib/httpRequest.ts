@@ -15,6 +15,7 @@ const getHttpRequestOptions = ({ url, timeout }: HttpRequestOptions) => ({
   protocol: url.protocol,
   hostname: url.hostname,
   path: url.pathname,
+  port: url.port,
   timeout,
 })
 
