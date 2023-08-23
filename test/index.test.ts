@@ -3,7 +3,7 @@ import * as nock from 'nock'
 
 const spyCreateRemoteJWKSet = jest.spyOn(jose, 'createRemoteJWKSet')
 
-import authentic from '../src/index'
+import { authentic } from '../src/index'
 import * as keys from './fixtures/keys.json'
 import * as oidc from './fixtures/oidc.json'
 
