@@ -8,8 +8,6 @@ The biggest change on this version is the replacement of [jsonwebtoken](https://
 
 Also, this new version doesn't export `authentic` as a default export anymore, apps using this new version will to import/require `{ authentic } from "@articulate/authentic"` instead.
 
-From this version on JWTs without the following claims will be rejected with a `Boom.unauthorized` error: `['aud', 'exp', 'iat', 'iss', 'sub']`.
-
 Before upgrading make sure your app uses the new expected `jwks` and `verify` options (which differ from the old ones).
 
 ### Dual Export of ESM and CJS Bundles
