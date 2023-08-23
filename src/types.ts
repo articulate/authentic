@@ -1,11 +1,11 @@
 import { JWTPayload, JWTVerifyOptions, RemoteJWKSetOptions } from 'jose'
 
 export interface JWT extends JWTPayload {
-  aud: string
   exp: number
   iat: number
   iss: string
   sub: string
+  aud?: string
   cid?: number | string
   scp?: Array<string>
   uid?: number
