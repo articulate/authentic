@@ -1,8 +1,6 @@
 import authentic from './authentic'
 
-export default authentic
-
-export type {
+import type {
   Authentic,
   AuthenticOpts,
   JWKSOpts,
@@ -10,3 +8,13 @@ export type {
   Validator,
   VerifyOpts
 } from './types'
+
+export {
+  authentic,
+  Authentic,
+  AuthenticOpts,
+  JWKSOpts,
+  JWT,
+  Validator,
+  VerifyOpts
+}
