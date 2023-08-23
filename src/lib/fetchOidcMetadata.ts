@@ -16,8 +16,8 @@ const addHttps = (url: string) =>
 
 const fetchOidcMetadata = async (issuerUri: string, timeout?: number) => {
   try {
-    const issuerUrl = addHttps(issuerUri)
-    const url = new URL('/.well-known/openid-configuration', issuerUrl)
+    const issuerUrl = addHttps(issuerUri).replace(/\/$/, '')
+    const url = new URL(`${issuerUrl}/.well-known/openid-configuration`)
     const response = await getRequest(url, timeout) as IssuerMetadata
 
     if (!response || !response.jwks_uri)
