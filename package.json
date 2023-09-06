@@ -1,6 +1,6 @@
 {
   "name": "@articulate/authentic",
-  "version": "2.0.5",
+  "version": "3.0.0",
   "description": "Proper validation of JWT's against JWK's",
   "repository": "git@github.com:articulate/authentic.git",
   "license": "MIT",
