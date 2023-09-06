@@ -2,44 +2,54 @@
   "name": "@articulate/authentic",
   "version": "2.0.5",
   "description": "Proper validation of JWT's against JWK's",
-  "main": "index.js",
-  "types": "index.d.ts",
   "repository": "git@github.com:articulate/authentic.git",
-  "author": "articulate",
   "license": "MIT",
-  "nyc": {
-    "check-coverage": true,
-    "lines": 100,
-    "statements": 100,
-    "functions": 100,
-    "branches": 100
+  "author": "articulate",
+  "exports": {
+    ".": {
+      "import": "./dist/authentic.mjs",
+      "require": "./dist/authentic.js",
+      "types": "./dist/authentic.d.ts"
+    }
   },
-  "engines": {
-    "node": ">=14"
-  },
+  "main": "dist/authentic.js",
+  "module": "dist/authentic.mjs",
+  "typings": "dist/authentic.d.ts",
+  "files": [
+    "dist/**/*",
+    "src/**/*"
+  ],
   "scripts": {
-    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "build": "rollup --config rollup.config.ts --configPlugin typescript",
     "lint": "eslint .",
-    "postversion": "git push --tags origin main",
-    "preversion": "git checkout main",
-    "test": "mocha",
-    "test:ci": "yarn lint && yarn test:coverage && yarn coverage",
-    "test:coverage": "nyc mocha --reporter=dot"
+    "test": "jest",
+    "test:watch": "jest --watchAll",
+    "test:ci": "npm run lint && npm run test:coverage",
+    "test:coverage": "jest --collectCoverage",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "@hapi/boom": "^10.0.0",
-    "jsonwebtoken": "^9.0.0",
-    "jwks-rsa": "^3.0.1",
-    "lodash.pick": "^4.4.0"
+    "jose": "^4.14.4"
   },
   "devDependencies": {
     "@changesets/cli": "^2.26.2",
-    "chai": "^4.1.2",
-    "coveralls": "^3.0.0",
-    "eslint": "^8.33.0",
-    "mocha": "6.0.x",
-    "nock": "11",
-    "nyc": "13.x.x",
-    "prop-factory": "^1.0.0"
+    "@rollup/plugin-typescript": "^11.1.2",
+    "@types/jest": "^29.5.3",
+    "@typescript-eslint/eslint-plugin": "^6.4.0",
+    "@typescript-eslint/parser": "^6.4.0",
+    "esbuild": "^0.19.2",
+    "eslint": "^8.47.0",
+    "jest": "^29.6.2",
+    "nock": "^13.3.3",
+    "rollup": "^3.28.0",
+    "rollup-plugin-dts": "^6.0.0",
+    "rollup-plugin-esbuild": "^5.0.0",
+    "ts-jest": "^29.1.1",
+    "tslib": "^2.6.1",
+    "typescript": "^5.1.6"
+  },
+  "engines": {
+    "node": ">=14"
   }
 }

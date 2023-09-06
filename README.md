@@ -1,6 +1,5 @@
 # @articulate/authentic
 [![@articulate/authentic](https://img.shields.io/npm/v/@articulate/authentic.svg)](https://www.npmjs.com/package/@articulate/authentic)
-[![Build Status](https://travis-ci.org/articulate/authentic.svg?branch=master)](https://travis-ci.org/articulate/authentic)
 [![Coverage Status](https://coveralls.io/repos/github/articulate/authentic/badge.svg?branch=master)](https://coveralls.io/github/articulate/authentic?branch=master)
 
 Proper validation of JWT's against JWK's.
@@ -42,16 +41,17 @@ const handler = req =>
 
 `authentic` accepts a JSON object with the following options:
 
-* `jwks` Object: options to forward to [`node-jwks-rsa`](https://github.com/auth0/node-jwks-rsa) with the following defaults:
+* `jwks` Object: options to forward to `jose.createRemoteJWKSet` from [`jose`](https://github.com/panva/jose/blob/main/docs/interfaces/jwks_remote.RemoteJWKSetOptions.md) with the following defaults:
 
 | option      | default |
 | ----------- | ------- |
-| `cache`     | `true`  |
-| `rateLimit` | `true`  |
+| `timeoutDuration` | `5000` (5 seconds)  |
+| `cooldownDuration` | `30000` (30 seconds)  |
+| `cacheMaxAge` | `60000` (10 minutes)  |
 
-* `verify` Object: options to forward to `jwt.verify` from [`jsonwebtoken`](https://github.com/auth0/node-jsonwebtoken#jwtverifytoken-secretorpublickey-options-callback)
+* `verify` Object: options to forward to `jose.jwtVerify` from [`jose`](https://github.com/panva/jose/blob/main/docs/interfaces/jwt_verify.JWTVerifyOptions.md)
 * `issWhitelist` Array: list of trusted OIDC issuers
-* `claimsInError` Array: list of jwt payload claims to receive as the `data` propery of the error when verification fails.  When a list is not provided a `data` property will not be added to the error.
+* `claimsInError` Array: list of jwt payload claims to receive as the `data` property of the error when verification fails.  When a list is not provided a `data` property will not be added to the error.
 
 ## Contributing
 
