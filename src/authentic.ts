@@ -1,7 +1,7 @@
 import { boomify, unauthorized } from '@hapi/boom'
 import { createRemoteJWKSet, decodeJwt, jwtVerify } from 'jose'
 
-import type { Authentic, AuthenticOpts, JWT, Validator } from './types'
+import type { AuthenticOpts, JWT, Validator } from './types'
 import type { JWTPayload, JWTVerifyGetKey } from 'jose'
 
 import fetchOidcMetadata from './lib/fetchOidcMetadata'
@@ -9,12 +9,12 @@ import IssWhitelistError from './lib/IssWhitelistError'
 
 const stripBearer = (str: string) => str.replace(/^Bearer /i, '')
 
-const authentic: Authentic = <T extends JWT>({
+export default function authentic<T extends JWT = JWT>({
   claimsInError,
   issWhitelist,
   jwks: jwksOpts,
   verify: verifyOpts = {},
-}: AuthenticOpts) => {
+}: AuthenticOpts): Validator<T> {
   const jwkKeys = new Map<string, JWTVerifyGetKey>()
 
   const decodeOnlyJwt = (token: string) => {
@@ -39,6 +39,7 @@ const authentic: Authentic = <T extends JWT>({
       const { jwks_uri } = await fetchOidcMetadata(iss, jwksOpts?.timeoutDuration)
       const jwksUrl = new URL(jwks_uri)
       JWK = createRemoteJWKSet(jwksUrl, jwksOpts)
+
       jwkKeys.set(iss, JWK)
     }
 
@@ -75,4 +76,3 @@ const authentic: Authentic = <T extends JWT>({
   return validator
 }
 
-export default authentic
