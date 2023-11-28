@@ -9,7 +9,7 @@ import IssWhitelistError from './lib/IssWhitelistError'
 
 const stripBearer = (str: string) => str.replace(/^Bearer /i, '')
 
-const authentic:Authentic = <T extends JWT>({
+const authentic: Authentic = <T extends JWT>({
   claimsInError,
   issWhitelist,
   jwks: jwksOpts,
