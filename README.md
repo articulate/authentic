@@ -1,6 +1,4 @@
 # @articulate/authentic
-[![@articulate/authentic](https://img.shields.io/npm/v/@articulate/authentic.svg)](https://www.npmjs.com/package/@articulate/authentic)
-[![Coverage Status](https://coveralls.io/repos/github/articulate/authentic/badge.svg?branch=master)](https://coveralls.io/github/articulate/authentic?branch=master)
 
 Proper validation of JWT's against JWK's.
 
