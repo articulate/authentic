@@ -55,9 +55,9 @@ export default function authentic<T extends JWT = JWT>({
     try {
       const iss = checkIss(decoded)
       const JWK = await getJwkKey(iss)
-      const { payload } = await jwtVerify(strippedToken, JWK, verifyOpts)
+      const { payload } = await jwtVerify<T>(strippedToken, JWK, verifyOpts)
 
-      return payload as T
+      return payload
     } catch (error) {
       const boomError = error instanceof IssWhitelistError
         ? boomify(error, { statusCode: 403 })
