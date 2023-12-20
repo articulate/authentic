@@ -26,13 +26,22 @@ Initialize `authentic` with an options object containing an `issWhitelist` array
 You'll receive a unary function which takes a JWT and returns a `Promise` that resolves with the parsed JWT payload if it is valid, or rejects with a `401` [Boom](https://github.com/hapijs/boom) error if it is invalid.
 
 ```js
-const authentic = require('@articulate/authentic')({
-  issWhitelist: JSON.parse(process.env.ISS_WHITELIST)
+// lib/authentic.js
+import { authentic } from '@articulate/authentic'
+
+export default authentic({
+  issWhitelist: process.env.ISS_WHITELIST.split('|'),
 })
+
+// main.js
+import authentic from './lib/authentic'
 
 const handler = req =>
   authentic(req.cookies.token)
-    .then(/* the JWT has been validated */)
+    .then(token => {
+      /* the JWT has been validated */
+    })
+    .catch(/* invalid token */)
 ```
 
 ## Options
