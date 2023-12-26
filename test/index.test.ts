@@ -1,8 +1,6 @@
 import * as jose from 'jose'
 import * as nock from 'nock'
 
-const spyCreateRemoteJWKSet = jest.spyOn(jose, 'createRemoteJWKSet')
-
 import { authentic } from '../src/index'
 import * as keys from './fixtures/keys.json'
 import * as oidc from './fixtures/oidc.json'
@@ -420,27 +418,6 @@ describe('authentic', () => {
       beforeEach(() => {
         wellKnownScope = nock(issuer).get(wellKnown).once().reply(404)
         keysScope = nock(issuer).get('/v1/keys').once().reply(200, keys)
-      })
-
-      it('booms with a 401', () =>
-        expect(authenticValidator(token)).rejects.toMatchObject({
-          isBoom: true,
-          output: {
-            statusCode: 401
-          },
-        })
-      )
-    })
-
-    describe('with an error while creating the remote JW set', () => {
-      const authenticValidator  = authentic({ issWhitelist: [ issuer ] })
-
-      beforeEach(() => {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        spyCreateRemoteJWKSet.mockImplementation(() => null)
-
-        wellKnownScope = nock(issuer).get(wellKnown).once().reply(200, oidc)
       })
 
       it('booms with a 401', () =>

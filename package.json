@@ -29,8 +29,8 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@hapi/boom": "^10.0.0",
-    "jose": "^4.14.4"
+    "@hapi/boom": "^10.0.1",
+    "jose": "^5.2.0"
   },
   "devDependencies": {
     "@changesets/cli": "^2.26.2",
@@ -50,6 +50,6 @@
     "typescript": "^5.1.6"
   },
   "engines": {
-    "node": ">=14"
+    "node": ">=18"
   }
 }

@@ -1,7 +1,7 @@
 import { boomify, unauthorized } from '@hapi/boom'
 import { createRemoteJWKSet, decodeJwt, jwtVerify } from 'jose'
 
-import type { Authentic, JWT, Validator } from './types'
+import type { AuthenticOpts, JWT, Validator } from './types'
 import type { JWTPayload, JWTVerifyGetKey } from 'jose'
 
 import fetchOidcMetadata from './lib/fetchOidcMetadata'
@@ -9,12 +9,12 @@ import IssWhitelistError from './lib/IssWhitelistError'
 
 const stripBearer = (str: string) => str.replace(/^Bearer /i, '')
 
-const authentic: Authentic = ({
+export default function authentic<T extends JWT = JWT>({
   claimsInError,
   issWhitelist,
   jwks: jwksOpts,
   verify: verifyOpts = {},
-}) => {
+}: AuthenticOpts): Validator<T> {
   const jwkKeys = new Map<string, JWTVerifyGetKey>()
 
   const decodeOnlyJwt = (token: string) => {
@@ -33,22 +33,20 @@ const authentic: Authentic = ({
   }
 
   const getJwkKey = async (iss: string): Promise<JWTVerifyGetKey> => {
-    if (!jwkKeys.has(iss)) {
+    let JWK = jwkKeys.get(iss)
+
+    if (!JWK) {
       const { jwks_uri } = await fetchOidcMetadata(iss, jwksOpts?.timeoutDuration)
       const jwksUrl = new URL(jwks_uri)
-      const JWK = createRemoteJWKSet(jwksUrl, jwksOpts)
+      JWK = createRemoteJWKSet(jwksUrl, jwksOpts)
 
       jwkKeys.set(iss, JWK)
     }
 
-    const JWK = jwkKeys.get(iss)
-
-    if (!JWK) throw unauthorized(`Unable to retrieve the JWK for ${iss}`)
-
     return JWK
   }
 
-  const validator: Validator = async token => {
+  const validator: Validator<T> = async token => {
     if (!token || !token.length) throw unauthorized('null token not allowed')
 
     const strippedToken = stripBearer(token)
@@ -57,9 +55,9 @@ const authentic: Authentic = ({
     try {
       const iss = checkIss(decoded)
       const JWK = await getJwkKey(iss)
-      const { payload } = await jwtVerify(strippedToken, JWK, verifyOpts)
+      const { payload } = await jwtVerify<T>(strippedToken, JWK, verifyOpts)
 
-      return payload as JWT
+      return payload
     } catch (error) {
       const boomError = error instanceof IssWhitelistError
         ? boomify(error, { statusCode: 403 })
@@ -78,4 +76,3 @@ const authentic: Authentic = ({
   return validator
 }
 
-export default authentic

@@ -17,8 +17,6 @@ export interface AuthenticOpts {
   verify?: VerifyOpts
 }
 
-export interface Validator {
-  (token: string): Promise<JWT>
-}
+export type Validator<T extends JWT = JWT> = (token: string) => Promise<T>
 
-export type Authentic = (opts: AuthenticOpts) => Validator
+export type Authentic<T extends JWT = JWT> = (opts: AuthenticOpts) => Validator<T>
