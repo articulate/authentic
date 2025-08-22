@@ -1,0 +1,15 @@
+name: Pull Request Automation
+on:
+  pull_request:
+    types: [opened, reopened, ready_for_review, converted_to_draft]
+
+jobs:
+  pr-automation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: articulate/pr-project-process-automation@v1.1.1
+        with:
+          token: ${{ secrets.GH_PAT }}
+          projectNumber: 101
+          reviewState: "👀 In review"
+          inProgressState: "🏗 In progress"
