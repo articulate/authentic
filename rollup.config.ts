@@ -1,7 +1,9 @@
+import { createRequire } from 'node:module'
+
 import dts from 'rollup-plugin-dts'
 import esbuild from 'rollup-plugin-esbuild'
 
-import packageJson from './package.json' assert { type: 'json' }
+const packageJson = createRequire(import.meta.url)('./package.json')
 
 const name = packageJson.main.replace(/\.js$/, '')
 
